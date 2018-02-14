@@ -419,5 +419,8 @@
     <ClInclude Include="..\Include\FoundationParsers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FoundationSets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

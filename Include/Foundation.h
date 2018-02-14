@@ -112,3 +112,5 @@ class CFoundation
 
 		bool m_bInitialized;
 	};
+
+#include "FoundationSets.h"
