@@ -224,14 +224,26 @@
     <ClCompile Include="CAeonTable.cpp" />
     <ClCompile Include="CAeonUploadSessions.cpp" />
     <ClCompile Include="CAeonView.cpp" />
+    <ClCompile Include="CBooleanRetrieval.cpp" />
+    <ClCompile Include="CExtendedLatinFilter.cpp" />
+    <ClCompile Include="CFullWidthCharacterFilter.cpp" />
+    <ClCompile Include="CIndexEngine.cpp" />
     <ClCompile Include="ConsoleMode.cpp" />
+    <ClCompile Include="CPostprocessor.cpp" />
+    <ClCompile Include="CPreprocessor.cpp" />
+    <ClCompile Include="CProseIndexEngineFactory.cpp" />
+    <ClCompile Include="CRowIndex.cpp" />
     <ClCompile Include="CRowInsertLog.cpp" />
     <ClCompile Include="CRowIterator.cpp" />
     <ClCompile Include="CRowKey.cpp" />
     <ClCompile Include="CSegmentBlockCache.cpp" />
+    <ClCompile Include="CSpaceTokenizer.cpp" />
+    <ClCompile Include="CTermOccurenceStream.cpp" />
+    <ClCompile Include="CToLowercase.cpp" />
     <ClCompile Include="IOrderedRowSet.cpp" />
     <ClCompile Include="MsgWaitForView.cpp" />
     <ClCompile Include="MsgWaitForVolume.cpp" />
+    <ClCompile Include="CPunctuationFilter.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

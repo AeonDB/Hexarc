@@ -831,68 +831,7 @@ class CAeonEngine : public TSimpleEngine<CAeonEngine>
 		CString m_sConsoleStorage;					//	If in console mode, this is the root of our storage
 	};
 
-// Indexing Engine
-
-class IFuzzyMapStorage
-{
-public:
-	virtual ~IFuzzyMapStorage(void) = 0;
-
-	virtual bool Add(const CString &sTerm) = 0;
-	virtual bool Create(void) = 0;
-	virtual bool Delete(void) = 0;
-	virtual bool HasTerm(const CString &sTerm) = 0;
-	virtual bool Open(void) = 0;
-	virtual bool Rebuild(void) = 0;
-};
-
-class IPreprocess
-{
-	virtual ~IPreprocess() = 0;
-	virtual void Operation(CString &sData) = 0;
-};
-
-class IPostprocess
-{
-	virtual ~IPostprocess() = 0;
-	virtual void Operation(CTermOccurenceStream &Data) = 0;
-};
-
-class CRowIndex
-{
-public:
-	void Add(const CString &sTerm, int iWordPosition);
-	SEQUENCENUMBER GetRowId();
-private:
-	TSortMap<CString, CIntArray> m_Map;
-};
-
-class CTermOccurenceStream
-{
-public:
-	bool HasNext();
-	STermOccurence Next();
-	void Append(CString sTerm, int iWordPosition);
-	void SetRowId(SEQUENCENUMBER RowId);
-	void SetRowKey(CRowKey RowKey);
-private:
-	SEQUENCENUMBER m_RowId;
-	CRowKey m_RowKey;
-	TArray<STermOccurence> m_Array;
-};
-
-struct STermOccurence
-{
-	CString sTerm;
-	int iPosition;
-};
-
-class IRetrievalModel
-{
-public:
-	virtual ~IRetrievalModel(void) = 0;
-	virtual bool Find(const CString &sQuery, CResultSet *retResults) = 0;
-};
+// Indexing Engine Core
 
 class IIndexStorage
 {
@@ -917,10 +856,94 @@ public:
 	virtual double Compare(const CString &sA, const CString &sB) = 0;
 };
 
-class IIndexEngineFactory
+class IFuzzyMapStorage
 {
-	virtual ~IIndexEngineFactory() = 0;
-	virtual CIndexEngine Create() = 0;
+public:
+	virtual ~IFuzzyMapStorage(void) = 0;
+
+	virtual bool Add(const CString &sTerm) = 0;
+	virtual bool Create(void) = 0;
+	virtual bool Delete(void) = 0;
+	virtual bool HasTerm(const CString &sTerm) = 0;
+	virtual bool Open(void) = 0;
+	virtual bool Rebuild(void) = 0;
+	virtual void SetStringSimilarity(IStringSimilarity *pStringSimilarity)
+	{
+		m_pStringSimilarity = pStringSimilarity;
+	}
+private:
+	IStringSimilarity * m_pStringSimilarity;
+};
+
+class IPreprocess
+{
+public:
+	virtual ~IPreprocess() = 0;
+	virtual void Operation(CString &sData) = 0;
+};
+
+class CPreprocessor
+{
+public:
+	~CPreprocessor();
+	void Append(IPreprocess *pProc);
+	void Run(CString &sData);
+private:
+	TArray<IPreprocess*> m_Processes;
+};
+
+struct STermOccurence
+{
+	CString sTerm;
+	int iPosition;
+};
+
+class CTermOccurenceStream
+{
+public:
+	bool HasNext();
+	STermOccurence Next();
+	void Append(CString sTerm, int iWordPosition);
+	void SetRowId(SEQUENCENUMBER RowId);
+	void SetRowKey(CRowKey RowKey);
+private:
+	SEQUENCENUMBER m_RowId;
+	CRowKey m_RowKey;
+	TArray<STermOccurence> m_Array;
+};
+
+class ITokenizer
+{
+public:
+	virtual ~ITokenizer() = 0;
+	virtual CTermOccurenceStream Operation(CString &sData) = 0;
+};
+
+class IPostprocess
+{
+public:
+	virtual ~IPostprocess() = 0;
+	virtual void Operation(CTermOccurenceStream &Data) = 0;
+};
+
+class CPostprocessor
+{
+public:
+	~CPostprocessor();
+	void Append(IPostprocess *pProc);
+	void Run(CTermOccurenceStream &Data);
+private:
+	TArray<IPostprocess*> m_Processes;
+};
+
+class CRowIndex
+{
+public:
+	void Add(const CString &sTerm, int iWordPosition);
+	SEQUENCENUMBER GetRowId();
+private:
+	TSortMap<CString, CIntArray> m_Map;
+	SEQUENCENUMBER m_RowId;
 };
 
 class CIndexEngine
@@ -932,52 +955,93 @@ public:
 	void SetPostprocessor(CPostprocessor *pProc);
 	void SetIndexStorage(IIndexStorage *pStorage);
 	void SetFuzzyMapStorage(IFuzzyMapStorage *pStorage);
-	bool  GetLastIndexed(SEQUENCENUMBER *retRowId);
+	bool GetLastIndexed(SEQUENCENUMBER *retRowId);
 	bool IndexRow(const CRowKey &RowKey, SEQUENCENUMBER RowId, CDatum dValue);
 	bool Open(void);
 	bool SetLastIndexed(SEQUENCENUMBER RowId);
+private:
+	CPreprocessor * m_pPreprocessor;
+	ITokenizer *m_pTokenizer;
+	CPostprocessor *m_pPostprocessor;
+	IIndexStorage *m_pStorage;
+	IFuzzyMapStorage *m_pStorage;
 };
 
-class CPreprocessor
+class IIndexEngineFactory
 {
 public:
-	~CPreprocessor();
-	void Append(IPreprocess *pProc);
+	virtual ~IIndexEngineFactory() = 0;
+	virtual CIndexEngine Create() = 0;
 };
 
-class CPostprocessor
-{
-	~CPostprocessor();
-	void Append(IPostprocess *pProc);
-};
+// Indexing Engine Concrete Algorithms
 
-class ITokenizer
+class CFullWidthCharacterFilter : public IPreprocess
 {
 public:
-	virtual ~ITokenizer() = 0;
-	virtual CTermOccurenceStream Operation(CString &sData) = 0;
+	~CFullWidthCharacterFilter();
+	void Operation(CString &sData);
 };
 
-class CBooleanRetrieval : public IRetrievalModel {};
+class CExtendedLatinFilter : public IPreprocess
+{
+public:
+	~CExtendedLatinFilter();
+	void Operation(CString &sData);
+};
 
-class CAdjacencyListStorage {};
+class CPunctuationFilter : public IPreprocess
+{
+public:
+	~CPunctuationFilter();
+	void Operation(CString &sData);
+};
+
+class CToLowercase : public IPreprocess
+{
+public:
+	~CToLowercase();
+	void Operation(CString &sData);
+};
+
+class CSpaceTokenizer : public ITokenizer
+{
+public:
+	~CSpaceTokenizer();
+	CTermOccurenceStream Operation(CString &sData);
+};
+
+class CNGramsDiceCoefficient : public IStringSimilarity
+{
+public:
+	~CNGramsDiceCoefficient(void);
+	double Compare(const CString &sA, const CString &sB);
+};
+
+class CAdjacencyListStorage : public IFuzzyMapStorage {};
+
+class CIndexStorageA : public IIndexStorage {};
+
+class CProseIndexEngineFactory : public IIndexEngineFactory
+{
+public:
+	CIndexEngine Create();
+};
+
+// Query Classes
 
 class CResultSet {};
 
-class CNGramsDiceCoefficient {};
+class IRetrievalModel
+{
+public:
+	virtual ~IRetrievalModel(void) = 0;
+	virtual bool Find(const CString &sQuery, CResultSet *retResults) = 0;
+};
 
-class CFullWidthCharacterFilter {};
-
-class CExtendedLatinFilter {};
-
-class PunctuationFilter {};
-
-class CIndexStorageA {};
-
-class CToLowercase {};
-
-class CWordStemmer {};
-
-class CProseIndexEngineFactory {};
-
-class CSpaceTokenizer :public ITokenizer {};
+class CBooleanRetrieval : public IRetrievalModel
+{
+public:
+	~CBooleanRetrieval(void);
+	bool Find(const CString &sQuery, CResultSet *retResults);
+};
