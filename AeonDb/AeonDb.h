@@ -833,17 +833,28 @@ class CAeonEngine : public TSimpleEngine<CAeonEngine>
 
 // Indexing Engine Core
 
+class CRowIndex
+{
+public:
+	~CRowIndex(void);
+	void Add(CString sTerm, int iTermPosition);
+	SEQUENCENUMBER GetRowId(void);
+private:
+	TSortMap<CString, CIntArray> m_Map;
+	SEQUENCENUMBER m_RowId;
+};
+
 class IIndexStorage
 {
 public:
-	virtual ~IIndexStorage(void) = 0;
-	virtual bool UpdateRow(const CRowKey &Key, const CRowIndex &Data) = 0;
+	virtual ~IIndexStorage(void) {}
 	virtual bool RemoveRow(const CRowKey &Key) = 0;
 	virtual bool InsertRow(const CRowKey &Key, const CRowIndex &Data) = 0;
+	virtual bool UpdateRow(const CRowKey &Key, const CRowIndex &Data) = 0;
 	virtual bool HasRow(const CRowKey &Key) = 0;
 	virtual bool HasTerm(const CString &sTerm) = 0;
-	virtual SEQUENCENUMBER GetLastIndexed(void) = 0;
-	virtual bool SetLastIndexed(const SEQUENCENUMBER RowID) = 0;
+	virtual bool GetLastIndexed(SEQUENCENUMBER *retRowId) = 0;
+	virtual bool SetLastIndexed(SEQUENCENUMBER RowID) = 0;
 	virtual bool Open(void) = 0;
 	virtual bool Create(void) = 0;
 	virtual bool Delete(void) = 0;
@@ -852,40 +863,34 @@ public:
 class IStringSimilarity
 {
 public:
-	virtual ~IStringSimilarity(void) = 0;
+	virtual ~IStringSimilarity(void) {}
 	virtual double Compare(const CString &sA, const CString &sB) = 0;
 };
 
 class IFuzzyMapStorage
 {
 public:
-	virtual ~IFuzzyMapStorage(void) = 0;
+	virtual ~IFuzzyMapStorage(void) {}
 
-	virtual bool Add(const CString &sTerm) = 0;
+	virtual bool AddTerm(const CString &sTerm) = 0;
 	virtual bool Create(void) = 0;
 	virtual bool Delete(void) = 0;
 	virtual bool HasTerm(const CString &sTerm) = 0;
 	virtual bool Open(void) = 0;
 	virtual bool Rebuild(void) = 0;
-	virtual void SetStringSimilarity(IStringSimilarity *pStringSimilarity)
-	{
-		m_pStringSimilarity = pStringSimilarity;
-	}
-private:
-	IStringSimilarity * m_pStringSimilarity;
 };
 
 class IPreprocess
 {
 public:
-	virtual ~IPreprocess() = 0;
+	virtual ~IPreprocess(void) {}
 	virtual void Operation(CString &sData) = 0;
 };
 
 class CPreprocessor
 {
 public:
-	~CPreprocessor();
+	~CPreprocessor(void);
 	void Append(IPreprocess *pProc);
 	void Run(CString &sData);
 private:
@@ -901,49 +906,40 @@ struct STermOccurence
 class CTermOccurenceStream
 {
 public:
-	bool HasNext();
-	STermOccurence Next();
+	~CTermOccurenceStream(void);
+	bool HasNext(void);
+	STermOccurence* Next(void);
 	void Append(CString sTerm, int iWordPosition);
 	void SetRowId(SEQUENCENUMBER RowId);
 	void SetRowKey(CRowKey RowKey);
 private:
 	SEQUENCENUMBER m_RowId;
 	CRowKey m_RowKey;
-	TArray<STermOccurence> m_Array;
+	TArray<STermOccurence*> m_Array;
 };
 
 class ITokenizer
 {
 public:
-	virtual ~ITokenizer() = 0;
+	virtual ~ITokenizer(void) {}
 	virtual CTermOccurenceStream Operation(CString &sData) = 0;
 };
 
 class IPostprocess
 {
 public:
-	virtual ~IPostprocess() = 0;
+	virtual ~IPostprocess(void) = 0;
 	virtual void Operation(CTermOccurenceStream &Data) = 0;
 };
 
 class CPostprocessor
 {
 public:
-	~CPostprocessor();
+	~CPostprocessor(void);
 	void Append(IPostprocess *pProc);
 	void Run(CTermOccurenceStream &Data);
 private:
 	TArray<IPostprocess*> m_Processes;
-};
-
-class CRowIndex
-{
-public:
-	void Add(const CString &sTerm, int iWordPosition);
-	SEQUENCENUMBER GetRowId();
-private:
-	TSortMap<CString, CIntArray> m_Map;
-	SEQUENCENUMBER m_RowId;
 };
 
 class CIndexEngine
@@ -956,22 +952,22 @@ public:
 	void SetIndexStorage(IIndexStorage *pStorage);
 	void SetFuzzyMapStorage(IFuzzyMapStorage *pStorage);
 	bool GetLastIndexed(SEQUENCENUMBER *retRowId);
-	bool IndexRow(const CRowKey &RowKey, SEQUENCENUMBER RowId, CDatum dValue);
+	bool IndexRow(const CRowKey &RowKey, SEQUENCENUMBER RowId, const CDatum &dValue);
 	bool Open(void);
 	bool SetLastIndexed(SEQUENCENUMBER RowId);
 private:
 	CPreprocessor * m_pPreprocessor;
 	ITokenizer *m_pTokenizer;
 	CPostprocessor *m_pPostprocessor;
-	IIndexStorage *m_pStorage;
-	IFuzzyMapStorage *m_pStorage;
+	IIndexStorage *m_pIndexStorage;
+	IFuzzyMapStorage *m_pFuzzyStorage;
 };
 
 class IIndexEngineFactory
 {
 public:
-	virtual ~IIndexEngineFactory() = 0;
-	virtual CIndexEngine Create() = 0;
+	virtual ~IIndexEngineFactory(void) {}
+	virtual CIndexEngine Create(void) = 0;
 };
 
 // Indexing Engine Concrete Algorithms
@@ -979,35 +975,35 @@ public:
 class CFullWidthCharacterFilter : public IPreprocess
 {
 public:
-	~CFullWidthCharacterFilter();
+	~CFullWidthCharacterFilter(void);
 	void Operation(CString &sData);
 };
 
 class CExtendedLatinFilter : public IPreprocess
 {
 public:
-	~CExtendedLatinFilter();
+	~CExtendedLatinFilter(void);
 	void Operation(CString &sData);
 };
 
 class CPunctuationFilter : public IPreprocess
 {
 public:
-	~CPunctuationFilter();
+	~CPunctuationFilter(void);
 	void Operation(CString &sData);
 };
 
 class CToLowercase : public IPreprocess
 {
 public:
-	~CToLowercase();
+	~CToLowercase(void);
 	void Operation(CString &sData);
 };
 
 class CSpaceTokenizer : public ITokenizer
 {
 public:
-	~CSpaceTokenizer();
+	~CSpaceTokenizer(void);
 	CTermOccurenceStream Operation(CString &sData);
 };
 
@@ -1025,23 +1021,38 @@ class CIndexStorageA : public IIndexStorage {};
 class CProseIndexEngineFactory : public IIndexEngineFactory
 {
 public:
-	CIndexEngine Create();
+	CIndexEngine Create(void);
 };
 
 // Query Classes
 
-class CResultSet {};
+struct SQueryResult
+{
+	SEQUENCENUMBER RowId;
+	CIntArray TermPositions;
+};
+
+class CQueryResultSet
+{
+public:
+	void Append(SEQUENCENUMBER RowId, CIntArray TermPositions);
+	SQueryResult* Next();
+	bool HasNext();
+private:
+	TArray<SQueryResult*> m_Results;
+	int m_iCounter;
+};
 
 class IRetrievalModel
 {
 public:
-	virtual ~IRetrievalModel(void) = 0;
-	virtual bool Find(const CString &sQuery, CResultSet *retResults) = 0;
+	virtual ~IRetrievalModel(void) {}
+	virtual bool Find(const CString &sQuery, CQueryResultSet *retResults) = 0;
 };
 
 class CBooleanRetrieval : public IRetrievalModel
 {
 public:
 	~CBooleanRetrieval(void);
-	bool Find(const CString &sQuery, CResultSet *retResults);
+	bool Find(const CString &sQuery, CQueryResultSet *retResults);
 };

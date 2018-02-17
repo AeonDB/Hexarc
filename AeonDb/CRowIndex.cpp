@@ -1,4 +1,5 @@
 #include "stdafx.h"
 
-void CRowIndex::Add(const CString &sTerm, int iWordPosition) {}
-SEQUENCENUMBER CRowIndex::GetRowId() {}
+CRowIndex::~CRowIndex(void) {}
+void CRowIndex::Add(CString sTerm, int iTermPosition) {}
+SEQUENCENUMBER CRowIndex::GetRowId() { return 0; }

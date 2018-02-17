@@ -1,4 +1,4 @@
 #include "stdafx.h"
 
 CSpaceTokenizer::~CSpaceTokenizer() {}
-CTermOccurenceStream CSpaceTokenizer::Operation(CString &sData) {}
+CTermOccurenceStream CSpaceTokenizer::Operation(CString &sData) { return CTermOccurenceStream(); }

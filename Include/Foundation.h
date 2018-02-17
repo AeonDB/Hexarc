@@ -74,6 +74,7 @@ class CManualEvent;
 #include "FoundationArrays.h"
 #include "FoundationMaps.h"
 #include "FoundationHashMaps.h"
+//#include "FoundationSets.h"
 #include "FoundationStreams.h"
 #include "FoundationStreams64.h"
 
@@ -112,5 +113,3 @@ class CFoundation
 
 		bool m_bInitialized;
 	};
-
-#include "FoundationSets.h"

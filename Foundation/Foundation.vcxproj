@@ -381,7 +381,6 @@
     <ClInclude Include="..\Include\FoundationXML.h" />
     <ClInclude Include="..\zlib-1.2.7\zlib.h" />
     <ClInclude Include="DBValueObjectImpl.h" />
-    <ClInclude Include="FoundationSets.h" />
     <ClInclude Include="IOCompletionPortImpl.h" />
     <ClInclude Include="PolygonIntersect.h" />
     <ClInclude Include="stdafx.h" />

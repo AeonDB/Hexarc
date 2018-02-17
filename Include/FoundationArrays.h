@@ -768,6 +768,22 @@ class CLargeSet
 		TArray<DWORD> m_Set;
 	};
 
+template <class VALUE> class TSortSet
+{
+public:
+	~TSortSet(void) {}
+	void Add(const VALUE e) {}
+	bool Contains(const VALUE e) { return false; }
+	bool IsEmpty(void) { return true; }
+	void Remove(const VALUE e) {}
+	int Size(void) { return 0; }
+	void AddAll(const TSortSet<VALUE> &other) {}
+	void RemoveAll(const TSortSet<VALUE> &other) {}
+	void RetainAll(const TSortSet<VALUE> &other) {}
+private:
+	TArray<VALUE> data;
+};
+
 //	Sparse Array ---------------------------------------------------------------
 
 template <class VALUE> class TSparseArray
