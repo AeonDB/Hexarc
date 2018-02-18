@@ -839,9 +839,15 @@ public:
 	~CRowIndex(void);
 	void Add(CString sTerm, int iTermPosition);
 	SEQUENCENUMBER GetRowId(void);
+	void Reset(void);
+	CString PeekTerm(void);
+	CIntArray PeekPositions(void);
+	void Next(void);
+	bool HasNext(void);
 private:
 	TSortMap<CString, CIntArray> m_Map;
 	SEQUENCENUMBER m_RowId;
+	int iCounter;
 };
 
 class IIndexStorage
@@ -943,25 +949,23 @@ private:
 };
 
 class CIndexEngine
-{
-public:
-	~CIndexEngine(void);
-	void SetPreprocessor(CPreprocessor *pProc);
-	void SetTokenizer(ITokenizer *pTokenizer);
-	void SetPostprocessor(CPostprocessor *pProc);
-	void SetIndexStorage(IIndexStorage *pStorage);
-	void SetFuzzyMapStorage(IFuzzyMapStorage *pStorage);
-	bool GetLastIndexed(SEQUENCENUMBER *retRowId);
-	bool IndexRow(const CRowKey &RowKey, SEQUENCENUMBER RowId, const CDatum &dValue);
-	bool Open(void);
-	bool SetLastIndexed(SEQUENCENUMBER RowId);
-private:
-	CPreprocessor * m_pPreprocessor;
-	ITokenizer *m_pTokenizer;
-	CPostprocessor *m_pPostprocessor;
-	IIndexStorage *m_pIndexStorage;
-	IFuzzyMapStorage *m_pFuzzyStorage;
-};
+	{
+	public:
+		CIndexEngine (CPreprocessor *pPreprocessor, ITokenizer *pTokenizer, CPostprocessor *pPostprocessor, IIndexStorage *pIndexStorage, IFuzzyMapStorage *pFuzzyStorage);
+		~CIndexEngine (void);
+
+		bool GetLastIndexed (SEQUENCENUMBER *retRowId);
+		bool IndexRow (const CRowKey &RowKey, SEQUENCENUMBER RowId, const CDatum &dValue);
+		bool Open (void);
+		bool SetLastIndexed (SEQUENCENUMBER RowId);
+
+	private:
+		CPreprocessor *m_pPreprocessor;
+		ITokenizer *m_pTokenizer;
+		CPostprocessor *m_pPostprocessor;
+		IIndexStorage *m_pIndexStorage;
+		IFuzzyMapStorage *m_pFuzzyStorage;
+	};
 
 class IIndexEngineFactory
 {
