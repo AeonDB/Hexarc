@@ -217,6 +217,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AeonModule.cpp" />
+    <ClCompile Include="CAdjacencyListStorage.cpp" />
     <ClCompile Include="CAeonEngine.cpp" />
     <ClCompile Include="CAeonRowArray.cpp" />
     <ClCompile Include="CAeonRowValue.cpp" />
@@ -228,6 +229,7 @@
     <ClCompile Include="CExtendedLatinFilter.cpp" />
     <ClCompile Include="CFullWidthCharacterFilter.cpp" />
     <ClCompile Include="CIndexEngine.cpp" />
+    <ClCompile Include="CIndexStorageA.cpp" />
     <ClCompile Include="CNGramsDiceCoefficient.cpp" />
     <ClCompile Include="ConsoleMode.cpp" />
     <ClCompile Include="CPostprocessor.cpp" />

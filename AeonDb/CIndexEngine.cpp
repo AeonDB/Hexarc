@@ -4,13 +4,13 @@
 //
 //	CIndexEngine is a collection of modules (CPreprocessor, ITokenizer, CPostprocessor)
 //	that modifies and atomizes strings into meaningful substrings and stores them
-//	(IIndexStorage, IFuzzyMapStorage).
+//	(IIndexStorage, IFuzzyGraphStorage).
 //
 //	This object should be instantiated by a concrete instance of IIndexEngineFactory.
 
 #include "stdafx.h"
 
-CIndexEngine::CIndexEngine (CPreprocessor *pPreprocessor, ITokenizer *pTokenizer, CPostprocessor *pPostprocessor, IIndexStorage *pIndexStorage, IFuzzyMapStorage *pFuzzyStorage)
+CIndexEngine::CIndexEngine (CPreprocessor *pPreprocessor, ITokenizer *pTokenizer, CPostprocessor *pPostprocessor, IIndexStorage *pIndexStorage, IFuzzyGraphStorage *pFuzzyStorage)
 
 //	CIndexEngine constructor
 

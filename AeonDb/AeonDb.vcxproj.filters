@@ -108,6 +108,12 @@
     <ClCompile Include="CQueryResultSet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CAdjacencyListStorage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CIndexStorageA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AeonDb.h">

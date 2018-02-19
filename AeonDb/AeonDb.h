@@ -834,124 +834,124 @@ class CAeonEngine : public TSimpleEngine<CAeonEngine>
 // Indexing Engine Core
 
 class CRowIndex
-{
-public:
-	~CRowIndex(void);
-	void Add(CString sTerm, int iTermPosition);
-	SEQUENCENUMBER GetRowId(void);
-	void Reset(void);
-	CString PeekTerm(void);
-	CIntArray PeekPositions(void);
-	void Next(void);
-	bool HasNext(void);
-private:
-	TSortMap<CString, CIntArray> m_Map;
-	SEQUENCENUMBER m_RowId;
-	int iCounter;
-};
+	{
+	public:
+		~CRowIndex(void);
+		void Add(CString sTerm, int iTermPosition);
+		SEQUENCENUMBER GetRowId(void);
+		void Reset(void);
+		CString PeekTerm(void);
+		CIntArray PeekPositions(void);
+		void Next(void);
+		bool HasNext(void);
+	private:
+		TSortMap<CString, CIntArray> m_Map;
+		SEQUENCENUMBER m_RowId;
+		int iCounter;
+	};
 
 class IIndexStorage
-{
-public:
-	virtual ~IIndexStorage(void) {}
-	virtual bool RemoveRow(const CRowKey &Key) = 0;
-	virtual bool InsertRow(const CRowKey &Key, const CRowIndex &Data) = 0;
-	virtual bool UpdateRow(const CRowKey &Key, const CRowIndex &Data) = 0;
-	virtual bool HasRow(const CRowKey &Key) = 0;
-	virtual bool HasTerm(const CString &sTerm) = 0;
-	virtual bool GetLastIndexed(SEQUENCENUMBER *retRowId) = 0;
-	virtual bool SetLastIndexed(SEQUENCENUMBER RowID) = 0;
-	virtual bool Open(void) = 0;
-	virtual bool Create(void) = 0;
-	virtual bool Delete(void) = 0;
-};
+	{
+	public:
+		virtual ~IIndexStorage(void) { }
+		virtual bool RemoveRow(const CRowKey &Key) = 0;
+		virtual bool InsertRow(const CRowKey &Key, const CRowIndex &Data) = 0;
+		virtual bool UpdateRow(const CRowKey &Key, const CRowIndex &Data) = 0;
+		virtual bool HasRow(const CRowKey &Key) = 0;
+		virtual bool HasTerm(const CString &sTerm) = 0;
+		virtual bool GetLastIndexed(SEQUENCENUMBER *retRowId) = 0;
+		virtual bool SetLastIndexed(SEQUENCENUMBER RowID) = 0;
+		virtual bool Open(void) = 0;
+		virtual bool Create(void) = 0;
+		virtual bool Delete(void) = 0;
+	};
 
 class IStringSimilarity
-{
-public:
-	virtual ~IStringSimilarity(void) {}
-	virtual double Compare(const CString &sA, const CString &sB) = 0;
-};
+	{
+	public:
+		virtual ~IStringSimilarity(void) { }
+		virtual double Compare(const CString &sA, const CString &sB) = 0;
+	};
 
-class IFuzzyMapStorage
-{
-public:
-	virtual ~IFuzzyMapStorage(void) {}
+class IFuzzyGraphStorage
+	{
+	public:
+		virtual ~IFuzzyGraphStorage(void) { }
 
-	virtual bool AddTerm(const CString &sTerm) = 0;
-	virtual bool Create(void) = 0;
-	virtual bool Delete(void) = 0;
-	virtual bool HasTerm(const CString &sTerm) = 0;
-	virtual bool Open(void) = 0;
-	virtual bool Rebuild(void) = 0;
-};
+		virtual bool AddTerm(const CString &sTerm) = 0;
+		virtual bool Create(void) = 0;
+		virtual bool Delete(void) = 0;
+		virtual bool HasTerm(const CString &sTerm) = 0;
+		virtual bool Open(void) = 0;
+		virtual bool Rebuild(void) = 0;
+	};
 
 class IPreprocess
-{
-public:
-	virtual ~IPreprocess(void) {}
-	virtual void Operation(CString &sData) = 0;
-};
+	{
+	public:
+		virtual ~IPreprocess(void) { }
+		virtual void Operation(CString &sData) = 0;
+	};
 
 class CPreprocessor
-{
-public:
-	~CPreprocessor(void);
-	void Append(IPreprocess *pProc);
-	void Run(CString &sData);
-private:
-	TArray<IPreprocess*> m_Processes;
-};
+	{
+	public:
+		~CPreprocessor(void);
+		void Append(IPreprocess *pProc);
+		void Run(CString &sData);
+	private:
+		TArray<IPreprocess*> m_Processes;
+	};
 
 struct STermOccurence
-{
+	{
 	CString sTerm;
 	int iPosition;
-};
+	};
 
 class CTermOccurenceStream
-{
-public:
-	~CTermOccurenceStream(void);
-	bool HasNext(void);
-	STermOccurence* Next(void);
-	void Append(CString sTerm, int iWordPosition);
-	void SetRowId(SEQUENCENUMBER RowId);
-	void SetRowKey(CRowKey RowKey);
-private:
-	SEQUENCENUMBER m_RowId;
-	CRowKey m_RowKey;
-	TArray<STermOccurence*> m_Array;
-};
+	{
+	public:
+		~CTermOccurenceStream(void);
+		bool HasNext(void);
+		STermOccurence* Next(void);
+		void Append(CString sTerm, int iWordPosition);
+		void SetRowId(SEQUENCENUMBER RowId);
+		void SetRowKey(CRowKey RowKey);
+	private:
+		SEQUENCENUMBER m_RowId;
+		CRowKey m_RowKey;
+		TArray<STermOccurence*> m_Array;
+	};
 
 class ITokenizer
-{
-public:
-	virtual ~ITokenizer(void) {}
-	virtual CTermOccurenceStream Operation(CString &sData) = 0;
-};
+	{
+	public:
+		virtual ~ITokenizer(void) { }
+		virtual CTermOccurenceStream Operation(CString &sData) = 0;
+	};
 
 class IPostprocess
-{
-public:
-	virtual ~IPostprocess(void) = 0;
-	virtual void Operation(CTermOccurenceStream &Data) = 0;
-};
+	{
+	public:
+		virtual ~IPostprocess(void) = 0;
+		virtual void Operation(CTermOccurenceStream &Data) = 0;
+	};
 
 class CPostprocessor
-{
-public:
-	~CPostprocessor(void);
-	void Append(IPostprocess *pProc);
-	void Run(CTermOccurenceStream &Data);
-private:
-	TArray<IPostprocess*> m_Processes;
-};
+	{
+	public:
+		~CPostprocessor(void);
+		void Append(IPostprocess *pProc);
+		void Run(CTermOccurenceStream &Data);
+	private:
+		TArray<IPostprocess*> m_Processes;
+	};
 
 class CIndexEngine
 	{
 	public:
-		CIndexEngine (CPreprocessor *pPreprocessor, ITokenizer *pTokenizer, CPostprocessor *pPostprocessor, IIndexStorage *pIndexStorage, IFuzzyMapStorage *pFuzzyStorage);
+		CIndexEngine (CPreprocessor *pPreprocessor, ITokenizer *pTokenizer, CPostprocessor *pPostprocessor, IIndexStorage *pIndexStorage, IFuzzyGraphStorage *pFuzzyStorage);
 		~CIndexEngine (void);
 
 		bool GetLastIndexed (SEQUENCENUMBER *retRowId);
@@ -960,103 +960,128 @@ class CIndexEngine
 		bool SetLastIndexed (SEQUENCENUMBER RowId);
 
 	private:
-		CPreprocessor *m_pPreprocessor;
+		CPreprocessor * m_pPreprocessor;
 		ITokenizer *m_pTokenizer;
 		CPostprocessor *m_pPostprocessor;
 		IIndexStorage *m_pIndexStorage;
-		IFuzzyMapStorage *m_pFuzzyStorage;
+		IFuzzyGraphStorage *m_pFuzzyStorage;
 	};
 
 class IIndexEngineFactory
-{
-public:
-	virtual ~IIndexEngineFactory(void) {}
-	virtual CIndexEngine Create(void) = 0;
-};
+	{
+	public:
+		virtual ~IIndexEngineFactory(void) { }
+		virtual CIndexEngine Create(void) = 0;
+	};
 
 // Indexing Engine Concrete Algorithms
 
 class CFullWidthCharacterFilter : public IPreprocess
-{
-public:
-	~CFullWidthCharacterFilter(void);
-	void Operation(CString &sData);
-};
+	{
+	public:
+		~CFullWidthCharacterFilter(void);
+		void Operation(CString &sData);
+	};
 
 class CExtendedLatinFilter : public IPreprocess
-{
-public:
-	~CExtendedLatinFilter(void);
-	void Operation(CString &sData);
-};
+	{
+	public:
+		~CExtendedLatinFilter(void);
+		void Operation(CString &sData);
+	};
 
 class CPunctuationFilter : public IPreprocess
-{
-public:
-	~CPunctuationFilter(void);
-	void Operation(CString &sData);
-};
+	{
+	public:
+		~CPunctuationFilter(void);
+		void Operation(CString &sData);
+	};
 
 class CToLowercase : public IPreprocess
-{
-public:
-	~CToLowercase(void);
-	void Operation(CString &sData);
-};
+	{
+	public:
+		~CToLowercase(void);
+		void Operation(CString &sData);
+	};
 
 class CSpaceTokenizer : public ITokenizer
-{
-public:
-	~CSpaceTokenizer(void);
-	CTermOccurenceStream Operation(CString &sData);
-};
+	{
+	public:
+		~CSpaceTokenizer(void);
+		CTermOccurenceStream Operation(CString &sData);
+	};
 
 class CNGramsDiceCoefficient : public IStringSimilarity
-{
-public:
-	~CNGramsDiceCoefficient(void);
-	double Compare(const CString &sA, const CString &sB);
-};
+	{
+	public:
+		~CNGramsDiceCoefficient(void);
+		double Compare(const CString &sA, const CString &sB);
+	};
 
-class CAdjacencyListStorage : public IFuzzyMapStorage {};
+class CAdjacencyListStorage : public IFuzzyGraphStorage
+	{
+	public:
+		~CAdjacencyListStorage(void);
 
-class CIndexStorageA : public IIndexStorage {};
+		bool AddTerm(const CString &sTerm);
+		bool Create(void);
+		bool Delete(void);
+		bool HasTerm(const CString &sTerm);
+		bool Open(void);
+		bool Rebuild(void);
+	};
+
+class CIndexStorageA : public IIndexStorage
+	{
+	public:
+		~CIndexStorageA(void);
+		bool RemoveRow(const CRowKey &Key);
+		bool InsertRow(const CRowKey &Key, const CRowIndex &Data);
+		bool UpdateRow(const CRowKey &Key, const CRowIndex &Data);
+		bool HasRow(const CRowKey &Key);
+		bool HasTerm(const CString &sTerm);
+		bool GetLastIndexed(SEQUENCENUMBER *retRowId);
+		bool SetLastIndexed(SEQUENCENUMBER RowID);
+		bool Open(void);
+		bool Create(void);
+		bool Delete(void);
+	};
 
 class CProseIndexEngineFactory : public IIndexEngineFactory
-{
-public:
-	CIndexEngine Create(void);
-};
+	{
+	public:
+		CIndexEngine Create(void);
+	};
 
 // Query Classes
 
 struct SQueryResult
-{
+	{
 	SEQUENCENUMBER RowId;
 	CIntArray TermPositions;
-};
+	};
 
 class CQueryResultSet
-{
-public:
-	void Append(SEQUENCENUMBER RowId, CIntArray TermPositions);
-	SQueryResult* Next();
-	bool HasNext();
-private:
-	TArray<SQueryResult*> m_Results;
-	int m_iCounter;
-};
+	{
+	public:
+		void Append(SEQUENCENUMBER RowId, CIntArray TermPositions);
+		SQueryResult* Next();
+		bool HasNext();
+	private:
+		TArray<SQueryResult*> m_Results;
+		int m_iCounter;
+	};
 
 class IRetrievalModel
-{
-public:
-	virtual ~IRetrievalModel(void) {}
-	virtual bool Find(const CString &sQuery, CQueryResultSet *retResults) = 0;
-};
+	{
+	public:
+		virtual ~IRetrievalModel(void) { }
+		virtual bool Find(const CString &sQuery, CQueryResultSet *retResults) = 0;
+	};
 
 class CBooleanRetrieval : public IRetrievalModel
-{
-public:
-	~CBooleanRetrieval(void);
-	bool Find(const CString &sQuery, CQueryResultSet *retResults);
-};
+	{
+	public:
+		~CBooleanRetrieval(void);
+		bool Find(const CString &sQuery, CQueryResultSet *retResults);
+	};
