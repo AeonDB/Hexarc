@@ -18,6 +18,54 @@
 
 #include "stdafx.h"
 
+CProseIndexEngineFactory::CProseIndexEngineFactory (void)
+
+//	CProseIndexEngineFactory constructor
+
+	{
+
+	//	Intentionally blank
+
+	}
+
+CProseIndexEngineFactory::CProseIndexEngineFactory (const CProseIndexEngineFactory &Factory)
+
+//	CProseIndexEngineFactory copy constructor
+
+	{
+
+	//	Intentionally blank
+
+	}
+
+CProseIndexEngineFactory::~CProseIndexEngineFactory (void)
+
+//	CProseIndexEngineFactory destructor
+
+	{
+
+	//	Intentionally blank
+
+	}
+
+CProseIndexEngineFactory &CProseIndexEngineFactory::operator= (const CProseIndexEngineFactory &Factory)
+
+//	CProseIndexEngineFactory copy assignment operator
+
+	{
+	return *this;
+	}
+
+IIndexEngineFactory* CProseIndexEngineFactory::Clone (void)
+
+//	Clone
+//
+//	Polymorphic method to decouple abstraction from implementation.
+
+	{
+	return new CProseIndexEngineFactory();
+	}
+
 CIndexEngine CProseIndexEngineFactory::Create (void)
 
 //	Create

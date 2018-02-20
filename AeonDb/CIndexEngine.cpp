@@ -22,6 +22,18 @@ CIndexEngine::CIndexEngine (CPreprocessor *pPreprocessor, ITokenizer *pTokenizer
 	m_pFuzzyStorage = pFuzzyStorage;
 	}
 
+CIndexEngine::CIndexEngine (const CIndexEngine &Engine)
+
+//	CIndexEngine copy constructor
+
+	{
+	m_pPreprocessor = new CPreprocessor(*Engine.m_pPreprocessor);
+	m_pTokenizer = Engine.m_pTokenizer->Clone();
+	m_pPostprocessor = new CPostprocessor(*Engine.m_pPostprocessor);
+	m_pIndexStorage = Engine.m_pIndexStorage->Clone();
+	m_pFuzzyStorage = Engine.m_pFuzzyStorage->Clone();
+	}
+
 CIndexEngine::~CIndexEngine (void)
 
 //	CIndexEngine destructor
@@ -32,6 +44,31 @@ CIndexEngine::~CIndexEngine (void)
 	delete m_pPostprocessor;
 	delete m_pIndexStorage;
 	delete m_pFuzzyStorage;
+	}
+
+CIndexEngine &CIndexEngine::operator= (const CIndexEngine &Engine)
+
+//	CIndexEngine copy assignment operator
+
+	{
+
+	//	Delete pointers.
+
+	delete m_pPreprocessor;
+	delete m_pTokenizer;
+	delete m_pPostprocessor;
+	delete m_pIndexStorage;
+	delete m_pFuzzyStorage;
+
+	//	Deep copy.
+
+	m_pPreprocessor = new CPreprocessor(*Engine.m_pPreprocessor);
+	m_pTokenizer = Engine.m_pTokenizer->Clone();
+	m_pPostprocessor = new CPostprocessor(*Engine.m_pPostprocessor);
+	m_pIndexStorage = Engine.m_pIndexStorage->Clone();
+	m_pFuzzyStorage = Engine.m_pFuzzyStorage->Clone();
+
+	return *this;
 	}
 
 bool CIndexEngine::GetLastIndexed (SEQUENCENUMBER *retRowId)

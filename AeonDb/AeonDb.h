@@ -854,6 +854,7 @@ class IIndexStorage
 	{
 	public:
 		virtual ~IIndexStorage(void) { }
+		virtual IIndexStorage* Clone(void) = 0;
 		virtual bool RemoveRow(const CRowKey &Key) = 0;
 		virtual bool InsertRow(const CRowKey &Key, const CRowIndex &Data) = 0;
 		virtual bool UpdateRow(const CRowKey &Key, const CRowIndex &Data) = 0;
@@ -870,6 +871,7 @@ class IStringSimilarity
 	{
 	public:
 		virtual ~IStringSimilarity(void) { }
+		virtual IStringSimilarity* Clone(void) = 0;
 		virtual double Compare(const CString &sA, const CString &sB) = 0;
 	};
 
@@ -878,6 +880,7 @@ class IFuzzyGraphStorage
 	public:
 		virtual ~IFuzzyGraphStorage(void) { }
 
+		virtual IFuzzyGraphStorage* Clone(void) = 0;
 		virtual bool AddTerm(const CString &sTerm) = 0;
 		virtual bool Create(void) = 0;
 		virtual bool Delete(void) = 0;
@@ -890,6 +893,7 @@ class IPreprocess
 	{
 	public:
 		virtual ~IPreprocess(void) { }
+		virtual IPreprocess* Clone(void) = 0;
 		virtual void Operation(CString &sData) = 0;
 	};
 
@@ -928,6 +932,7 @@ class ITokenizer
 	{
 	public:
 		virtual ~ITokenizer(void) { }
+		virtual ITokenizer* Clone(void) = 0;
 		virtual CTermOccurenceStream Operation(CString &sData) = 0;
 	};
 
@@ -935,6 +940,7 @@ class IPostprocess
 	{
 	public:
 		virtual ~IPostprocess(void) = 0;
+		virtual IPostprocess* Clone(void) = 0;
 		virtual void Operation(CTermOccurenceStream &Data) = 0;
 	};
 
@@ -952,7 +958,10 @@ class CIndexEngine
 	{
 	public:
 		CIndexEngine (CPreprocessor *pPreprocessor, ITokenizer *pTokenizer, CPostprocessor *pPostprocessor, IIndexStorage *pIndexStorage, IFuzzyGraphStorage *pFuzzyStorage);
+		CIndexEngine (const CIndexEngine &Engine);
 		~CIndexEngine (void);
+
+		CIndexEngine &operator= (const CIndexEngine &Engine);
 
 		bool GetLastIndexed (SEQUENCENUMBER *retRowId);
 		bool IndexRow (const CRowKey &RowKey, SEQUENCENUMBER RowId, const CDatum &dValue);
@@ -971,6 +980,7 @@ class IIndexEngineFactory
 	{
 	public:
 		virtual ~IIndexEngineFactory(void) { }
+		virtual IIndexEngineFactory* Clone(void) = 0;
 		virtual CIndexEngine Create(void) = 0;
 	};
 
@@ -980,6 +990,7 @@ class CFullWidthCharacterFilter : public IPreprocess
 	{
 	public:
 		~CFullWidthCharacterFilter(void);
+		IPreprocess* Clone(void);
 		void Operation(CString &sData);
 	};
 
@@ -987,6 +998,7 @@ class CExtendedLatinFilter : public IPreprocess
 	{
 	public:
 		~CExtendedLatinFilter(void);
+		IPreprocess* Clone(void);
 		void Operation(CString &sData);
 	};
 
@@ -994,6 +1006,7 @@ class CPunctuationFilter : public IPreprocess
 	{
 	public:
 		~CPunctuationFilter(void);
+		IPreprocess* Clone(void);
 		void Operation(CString &sData);
 	};
 
@@ -1001,6 +1014,7 @@ class CToLowercase : public IPreprocess
 	{
 	public:
 		~CToLowercase(void);
+		IPreprocess* Clone(void);
 		void Operation(CString &sData);
 	};
 
@@ -1008,6 +1022,7 @@ class CSpaceTokenizer : public ITokenizer
 	{
 	public:
 		~CSpaceTokenizer(void);
+		ITokenizer* Clone(void);
 		CTermOccurenceStream Operation(CString &sData);
 	};
 
@@ -1015,6 +1030,7 @@ class CNGramsDiceCoefficient : public IStringSimilarity
 	{
 	public:
 		~CNGramsDiceCoefficient(void);
+		IStringSimilarity* Clone(void);
 		double Compare(const CString &sA, const CString &sB);
 	};
 
@@ -1022,7 +1038,7 @@ class CAdjacencyListStorage : public IFuzzyGraphStorage
 	{
 	public:
 		~CAdjacencyListStorage(void);
-
+		IFuzzyGraphStorage* Clone(void);
 		bool AddTerm(const CString &sTerm);
 		bool Create(void);
 		bool Delete(void);
@@ -1035,6 +1051,7 @@ class CIndexStorageA : public IIndexStorage
 	{
 	public:
 		~CIndexStorageA(void);
+		IIndexStorage* Clone(void);
 		bool RemoveRow(const CRowKey &Key);
 		bool InsertRow(const CRowKey &Key, const CRowIndex &Data);
 		bool UpdateRow(const CRowKey &Key, const CRowIndex &Data);
@@ -1050,7 +1067,14 @@ class CIndexStorageA : public IIndexStorage
 class CProseIndexEngineFactory : public IIndexEngineFactory
 	{
 	public:
-		CIndexEngine Create(void);
+		CProseIndexEngineFactory (void);
+		CProseIndexEngineFactory (const CProseIndexEngineFactory &Factory);
+		~CProseIndexEngineFactory (void);
+
+		CProseIndexEngineFactory &operator= (const CProseIndexEngineFactory &Factory);
+
+		IIndexEngineFactory* Clone(void);
+		CIndexEngine Create (void);
 	};
 
 // Query Classes
@@ -1076,6 +1100,7 @@ class IRetrievalModel
 	{
 	public:
 		virtual ~IRetrievalModel(void) { }
+		virtual IRetrievalModel* Clone(void) = 0;
 		virtual bool Find(const CString &sQuery, CQueryResultSet *retResults) = 0;
 	};
 
@@ -1083,5 +1108,6 @@ class CBooleanRetrieval : public IRetrievalModel
 	{
 	public:
 		~CBooleanRetrieval(void);
+		IRetrievalModel* Clone(void);
 		bool Find(const CString &sQuery, CQueryResultSet *retResults);
 	};

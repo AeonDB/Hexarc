@@ -1,6 +1,12 @@
 #include "stdafx.h"
 
 CIndexStorageA::~CIndexStorageA(void) { }
+
+IIndexStorage* CIndexStorageA::Clone(void)
+	{
+	return new CIndexStorageA();
+	}
+
 bool CIndexStorageA::RemoveRow(const CRowKey &Key) { return false; }
 bool CIndexStorageA::InsertRow(const CRowKey &Key, const CRowIndex &Data) { return false; }
 bool CIndexStorageA::UpdateRow(const CRowKey &Key, const CRowIndex &Data) { return false; }

@@ -1,7 +1,10 @@
 #include "stdafx.h"
 
 CAdjacencyListStorage::~CAdjacencyListStorage(void) { }
-
+IFuzzyGraphStorage* CAdjacencyListStorage::Clone()
+	{
+	return new CAdjacencyListStorage();
+	}
 bool CAdjacencyListStorage::AddTerm(const CString &sTerm) { return false; }
 bool CAdjacencyListStorage::Create(void) { return false; }
 bool CAdjacencyListStorage::Delete(void) { return false; }
