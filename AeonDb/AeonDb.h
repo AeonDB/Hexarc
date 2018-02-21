@@ -969,7 +969,7 @@ class CIndexEngine
 		bool SetLastIndexed (SEQUENCENUMBER RowId);
 
 	private:
-		CPreprocessor *m_pPreprocessor;
+		CPreprocessor * m_pPreprocessor;
 		ITokenizer *m_pTokenizer;
 		CPostprocessor *m_pPostprocessor;
 		IIndexStorage *m_pIndexStorage;
@@ -1104,21 +1104,39 @@ class CProseIndexEngineFactory : public IIndexEngineFactory
 
 // Query Classes
 
-struct SQueryResult
-	{
-	SEQUENCENUMBER RowId;
-	CIntArray TermPositions;
-	};
-
-class CQueryResultSet
+class CResultsIterator
 	{
 	public:
-		void Append(SEQUENCENUMBER RowId, CIntArray TermPositions);
-		SQueryResult* Next();
-		bool HasNext();
+		CResultsIterator (TArray<SEQUENCENUMBER> &RowIds, TArray<CIntArray> &Positions);
+		CResultsIterator (const CResultsIterator &Other);
+		~CResultsIterator (void);
+
+		CResultsIterator &operator= (const CResultsIterator &Other);
+
+		bool HasNext (void);
+		void Next (void);
+		SEQUENCENUMBER &PeekRowId (void);
+		CIntArray &PeekTermPositions (void);
 	private:
-		TArray<SQueryResult*> m_Results;
 		int m_iCounter;
+		TArray<SEQUENCENUMBER> &m_RowIds;
+		TArray<CIntArray> &m_Positions;
+	};
+
+class CQueryResults
+	{
+	public:
+		CQueryResults (void);
+		CQueryResults (const CQueryResults &Other);
+		~CQueryResults (void);
+
+		CQueryResults &operator= (const CQueryResults &Other);
+
+		void Append (SEQUENCENUMBER RowId, const CIntArray &TermPositions);
+		CResultsIterator *Iterator (void);
+	private:
+		TArray<SEQUENCENUMBER> m_RowIds;
+		TArray<CIntArray> m_Positions;
 	};
 
 class IRetrievalModel
@@ -1126,7 +1144,7 @@ class IRetrievalModel
 	public:
 		virtual ~IRetrievalModel(void) { }
 		virtual IRetrievalModel* Clone(void) = 0;
-		virtual bool Find(const CString &sQuery, CQueryResultSet *retResults) = 0;
+		virtual bool Find(const CString &sQuery, CQueryResults *retResults) = 0;
 	};
 
 class CBooleanRetrieval : public IRetrievalModel
@@ -1134,5 +1152,5 @@ class CBooleanRetrieval : public IRetrievalModel
 	public:
 		~CBooleanRetrieval(void);
 		IRetrievalModel* Clone(void);
-		bool Find(const CString &sQuery, CQueryResultSet *retResults);
+		bool Find(const CString &sQuery, CQueryResults *retResults);
 	};

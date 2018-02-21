@@ -235,7 +235,7 @@
     <ClCompile Include="CPostprocessor.cpp" />
     <ClCompile Include="CPreprocessor.cpp" />
     <ClCompile Include="CProseIndexEngineFactory.cpp" />
-    <ClCompile Include="CQueryResultSet.cpp" />
+    <ClCompile Include="CQueryResults.cpp" />
     <ClCompile Include="CRowIndex.cpp" />
     <ClCompile Include="CRowInsertLog.cpp" />
     <ClCompile Include="CRowIterator.cpp" />

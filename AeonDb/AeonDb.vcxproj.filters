@@ -99,9 +99,6 @@
     <ClCompile Include="CNGramsDiceCoefficient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CQueryResultSet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CAdjacencyListStorage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -112,6 +109,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CWhitespaceTokenizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CQueryResults.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
