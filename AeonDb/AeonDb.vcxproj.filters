@@ -81,9 +81,6 @@
     <ClCompile Include="CPostprocessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CFullWidthCharacterFilter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CExtendedLatinFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -112,6 +109,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CIndexStorageA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CFullwidthAsciiFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -227,7 +227,7 @@
     <ClCompile Include="CAeonView.cpp" />
     <ClCompile Include="CBooleanRetrieval.cpp" />
     <ClCompile Include="CExtendedLatinFilter.cpp" />
-    <ClCompile Include="CFullWidthCharacterFilter.cpp" />
+    <ClCompile Include="CFullwidthAsciiFilter.cpp" />
     <ClCompile Include="CIndexEngine.cpp" />
     <ClCompile Include="CIndexStorageA.cpp" />
     <ClCompile Include="CNGramsDiceCoefficient.cpp" />

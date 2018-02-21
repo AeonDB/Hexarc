@@ -13,7 +13,7 @@
 //	* CFullwidthAsciiFilter
 //	* CPunctuationFilter
 //	
-//	Uses CSpaceTokenizer as the tokenizer.
+//	Uses CWhitespaceTokenizer as the tokenizer.
 //	Does not use any postprocessing classes.
 
 #include "stdafx.h"
@@ -84,7 +84,7 @@ CIndexEngine CProseIndexEngineFactory::Create (void)
 
 	//	Tokenizer
 
-	ITokenizer *pTokenizer = new CSpaceTokenizer();
+	ITokenizer *pTokenizer = new CWhitespaceTokenizer();
 
 	//	Empty postprocessor
 

@@ -1038,11 +1038,16 @@ class CExtendedLatinFilter : public IPostprocess
 		void Operation(CTermOccurenceStream &Data);
 	};
 
-class CSpaceTokenizer : public ITokenizer
+class CWhitespaceTokenizer : public ITokenizer
 	{
 	public:
-		~CSpaceTokenizer(void);
-		ITokenizer* Clone(void);
+		CWhitespaceTokenizer (void);
+		CWhitespaceTokenizer (const CWhitespaceTokenizer &Other);
+		~CWhitespaceTokenizer(void);
+
+		CWhitespaceTokenizer &operator= (const CWhitespaceTokenizer &Other);
+
+		ITokenizer *Clone(void);
 		CTermOccurenceStream Operation(CString &sData);
 	};
 
