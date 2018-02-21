@@ -87,9 +87,6 @@
     <ClCompile Include="CToLowercase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CSpaceTokenizer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CProseIndexEngineFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -112,6 +109,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CFullwidthAsciiFilter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CWhitespaceTokenizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

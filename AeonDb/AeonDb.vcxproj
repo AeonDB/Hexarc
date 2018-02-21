@@ -241,7 +241,7 @@
     <ClCompile Include="CRowIterator.cpp" />
     <ClCompile Include="CRowKey.cpp" />
     <ClCompile Include="CSegmentBlockCache.cpp" />
-    <ClCompile Include="CSpaceTokenizer.cpp" />
+    <ClCompile Include="CWhitespaceTokenizer.cpp" />
     <ClCompile Include="CTermOccurenceStream.cpp" />
     <ClCompile Include="CToLowercase.cpp" />
     <ClCompile Include="IOrderedRowSet.cpp" />
