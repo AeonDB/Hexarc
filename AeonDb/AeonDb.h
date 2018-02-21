@@ -939,7 +939,7 @@ class ITokenizer
 class IPostprocess
 	{
 	public:
-		virtual ~IPostprocess(void) = 0;
+		virtual ~IPostprocess(void) { }
 		virtual IPostprocess* Clone(void) = 0;
 		virtual void Operation(CTermOccurenceStream &Data) = 0;
 	};

@@ -58,7 +58,7 @@ CExtendedLatinFilter &CExtendedLatinFilter::operator= (const CExtendedLatinFilte
 	return *this;
 	}
 
-IPostprocess* CExtendedLatinFilter::Clone (void)
+IPostprocess *CExtendedLatinFilter::Clone (void)
 
 //	Clone
 //

@@ -7,14 +7,15 @@
 //	for English literature as opposed to programming languages, mathematics,
 //	records, etc.
 //
-//	Uses the following preprocessing classes:
-//	* CToLowercase
-//	* CExtendedLatinFilter
+//	Uses the following preprocessing classes in this order:
 //	* CFullwidthAsciiFilter
 //	* CPunctuationFilter
 //	
 //	Uses CWhitespaceTokenizer as the tokenizer.
-//	Does not use any postprocessing classes.
+//
+//	Uses the following preprocessing classes in this order:
+//	* CExtendedLatinFilter
+//	* CToLowercase
 
 #include "stdafx.h"
 
@@ -77,8 +78,6 @@ CIndexEngine CProseIndexEngineFactory::Create (void)
 	//	Insert the preprocessing classes listed in the class description. Order matters.
 
 	CPreprocessor *pPreprocessor = new CPreprocessor();
-	pPreprocessor->Append(new CToLowercase());
-	pPreprocessor->Append(new CExtendedLatinFilter());
 	pPreprocessor->Append(new CFullwidthAsciiFilter());
 	pPreprocessor->Append(new CPunctuationFilter());
 
@@ -86,9 +85,11 @@ CIndexEngine CProseIndexEngineFactory::Create (void)
 
 	ITokenizer *pTokenizer = new CWhitespaceTokenizer();
 
-	//	Empty postprocessor
+	//	Insert the postprocessing classes listed in the class description. Order matters.
 
 	CPostprocessor *pPostprocessor = new CPostprocessor();
+	pPostprocessor->Append(new CExtendedLatinFilter());
+	pPostprocessor->Append(new CToLowercase());
 
 	//	Storage classes are interchangeable.
 
