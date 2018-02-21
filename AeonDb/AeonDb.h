@@ -969,7 +969,7 @@ class CIndexEngine
 		bool SetLastIndexed (SEQUENCENUMBER RowId);
 
 	private:
-		CPreprocessor * m_pPreprocessor;
+		CPreprocessor *m_pPreprocessor;
 		ITokenizer *m_pTokenizer;
 		CPostprocessor *m_pPostprocessor;
 		IIndexStorage *m_pIndexStorage;
@@ -986,36 +986,56 @@ class IIndexEngineFactory
 
 // Indexing Engine Concrete Algorithms
 
-class CFullWidthCharacterFilter : public IPreprocess
+class CFullwidthAsciiFilter : public IPreprocess
 	{
 	public:
-		~CFullWidthCharacterFilter(void);
-		IPreprocess* Clone(void);
-		void Operation(CString &sData);
-	};
+		CFullwidthAsciiFilter (void);
+		CFullwidthAsciiFilter (const CFullwidthAsciiFilter &Other);
+		~CFullwidthAsciiFilter (void);
 
-class CExtendedLatinFilter : public IPreprocess
-	{
-	public:
-		~CExtendedLatinFilter(void);
-		IPreprocess* Clone(void);
-		void Operation(CString &sData);
+		CFullwidthAsciiFilter &operator= (const CFullwidthAsciiFilter &Other);
+
+		IPreprocess *Clone (void);
+		void Operation (CString &sData);
 	};
 
 class CPunctuationFilter : public IPreprocess
 	{
 	public:
-		~CPunctuationFilter(void);
-		IPreprocess* Clone(void);
-		void Operation(CString &sData);
+		CPunctuationFilter (void);
+		CPunctuationFilter (const CPunctuationFilter &Other);
+		~CPunctuationFilter (void);
+
+		CPunctuationFilter &operator= (const CPunctuationFilter &Other);
+
+		IPreprocess *Clone (void);
+		void Operation (CString &sData);
 	};
 
-class CToLowercase : public IPreprocess
+class CToLowercase : public IPostprocess
 	{
 	public:
-		~CToLowercase(void);
-		IPreprocess* Clone(void);
-		void Operation(CString &sData);
+		CToLowercase (void);
+		CToLowercase (const CToLowercase &Other);
+		~CToLowercase (void);
+
+		CToLowercase &operator= (const CToLowercase &Other);
+
+		IPostprocess *Clone (void);
+		void Operation (CTermOccurenceStream &Data);
+	};
+
+class CExtendedLatinFilter : public IPostprocess
+	{
+	public:
+		CExtendedLatinFilter (void);
+		CExtendedLatinFilter (const CExtendedLatinFilter &Other);
+		~CExtendedLatinFilter (void);
+
+		CExtendedLatinFilter &operator= (const CExtendedLatinFilter &Other);
+
+		IPostprocess *Clone (void);
+		void Operation(CTermOccurenceStream &Data);
 	};
 
 class CSpaceTokenizer : public ITokenizer

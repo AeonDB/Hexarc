@@ -10,7 +10,7 @@
 //	Uses the following preprocessing classes:
 //	* CToLowercase
 //	* CExtendedLatinFilter
-//	* CFullWidthCharacterFilter
+//	* CFullwidthAsciiFilter
 //	* CPunctuationFilter
 //	
 //	Uses CSpaceTokenizer as the tokenizer.
@@ -79,7 +79,7 @@ CIndexEngine CProseIndexEngineFactory::Create (void)
 	CPreprocessor *pPreprocessor = new CPreprocessor();
 	pPreprocessor->Append(new CToLowercase());
 	pPreprocessor->Append(new CExtendedLatinFilter());
-	pPreprocessor->Append(new CFullWidthCharacterFilter());
+	pPreprocessor->Append(new CFullwidthAsciiFilter());
 	pPreprocessor->Append(new CPunctuationFilter());
 
 	//	Tokenizer
