@@ -272,3 +272,5 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+zlib-1.2.7/contrib/masmx64/inffasx64.lst
+zlib-1.2.7/contrib/masmx64/gvmat64.lst
