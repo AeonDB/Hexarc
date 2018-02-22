@@ -110,12 +110,12 @@ bool CIndexEngine::IndexRow (const CRowKey &RowKey, SEQUENCENUMBER RowId, const 
 
 	//	Organize the term-position pairs into a one-to-many structure.
 
-	STermOccurence *Occurence;
 	CRowIndex IndexedRow(RowId);
-	while (TermOccurences.HasNext())
+	CTermOccurenceStreamIterator iterator = TermOccurences.Iterator;
+	while (iterator.HasNext())
 		{
-		Occurence = TermOccurences.Next();
-		IndexedRow.Add(Occurence->sTerm, Occurence->iPosition);
+		iterator.Next();
+		IndexedRow.Add(iterator.PeekTerm, iterator.PeekPos);
 		}
 
 	//	Update an existing or insert a new mapping into the index.

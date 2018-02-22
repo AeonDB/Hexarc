@@ -849,7 +849,7 @@ class CRowIndexIterator
 		void Reset(void);
 	private:
 		TSortMap<CString, CIntArray> &m_Map;
-		int iCounter;
+		int m_iCounter;
 	};
 
 class CRowIndex
@@ -931,30 +931,41 @@ class CPreprocessor
 		TArray<IPreprocess*> m_Processes;
 	};
 
-struct STermOccurence
+class CTermOccurenceStreamIterator
 	{
-	CString sTerm;
-	int iPosition;
+	public:
+		CTermOccurenceStreamIterator (CStringArray &Terms, CIntArray &Positions);
+		CTermOccurenceStreamIterator (const CTermOccurenceStreamIterator &Other);
+		~CTermOccurenceStreamIterator (void);
+
+		CTermOccurenceStreamIterator &operator= (const CTermOccurenceStreamIterator &Other);
+
+		bool HasNext(void);
+		void Next(void);
+		int &PeekPos(void);
+		CString &PeekTerm(void);
+	private:
+		CStringArray &m_Terms;
+		CIntArray &m_Positions;
+		int m_iCounter;
 	};
 
 class CTermOccurenceStream
 	{
 	public:
-		CTermOccurenceStream (void);
+		CTermOccurenceStream (CRowKey &RowKey, SEQUENCENUMBER RowId);
 		CTermOccurenceStream (const CTermOccurenceStream &Other);
 		~CTermOccurenceStream (void);
 
 		CTermOccurenceStream &operator= (const CTermOccurenceStream &Other);
 
-		bool HasNext(void);
-		STermOccurence* Next(void);
 		void Append(CString sTerm, int iWordPosition);
-		void SetRowId(SEQUENCENUMBER RowId);
-		void SetRowKey(CRowKey RowKey);
+		CTermOccurenceStreamIterator Iterator(void);
 	private:
-		SEQUENCENUMBER m_RowId;
 		CRowKey m_RowKey;
-		TArray<STermOccurence*> m_Array;
+		SEQUENCENUMBER m_RowId;
+		CStringArray m_Terms;
+		CIntArray m_Positions;
 	};
 
 class ITokenizer

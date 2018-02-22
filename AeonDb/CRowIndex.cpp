@@ -19,7 +19,7 @@ CRowIndexIterator::CRowIndexIterator (TSortMap<CString, CIntArray> &Map) : m_Map
 //	CRowIndexIterator constructor
 
 	{
-	iCounter = -1;
+	m_iCounter = -1;
 	}
 
 CRowIndexIterator::CRowIndexIterator (const CRowIndexIterator &Other) : m_Map(Other.m_Map)
@@ -27,7 +27,7 @@ CRowIndexIterator::CRowIndexIterator (const CRowIndexIterator &Other) : m_Map(Ot
 //	CRowIndexIterator copy constructor
 
 	{
-	iCounter = Other.iCounter;
+	m_iCounter = Other.m_iCounter;
 	}
 
 CRowIndexIterator::~CRowIndexIterator (void)
@@ -52,7 +52,7 @@ bool CRowIndexIterator::HasNext (void)
 //	Returns true if there are more elements after the current element.
 
 	{
-	return iCounter < m_Map.GetCount() - 1;
+	return m_iCounter < m_Map.GetCount() - 1;
 	}
 
 void CRowIndexIterator::Next (void)
@@ -62,7 +62,7 @@ void CRowIndexIterator::Next (void)
 //	Iterates to the next element. Can iterate beyond its range.
 
 	{
-	iCounter++;
+	m_iCounter++;
 	}
 
 CIntArray &CRowIndexIterator::PeekPos (void)
@@ -72,7 +72,7 @@ CIntArray &CRowIndexIterator::PeekPos (void)
 //	Returns a reference to a list of index term positions.
 
 	{
-	return m_Map.GetValue(iCounter);
+	return m_Map.GetValue(m_iCounter);
 	}
 
 const CString &CRowIndexIterator::PeekTerm (void)
@@ -82,7 +82,7 @@ const CString &CRowIndexIterator::PeekTerm (void)
 //	Returns a reference to the current index term.
 
 	{
-	return m_Map.GetKey(iCounter);
+	return m_Map.GetKey(m_iCounter);
 	}
 
 void CRowIndexIterator::Reset (void)
@@ -92,7 +92,7 @@ void CRowIndexIterator::Reset (void)
 //	Sets the internal counter to index -1.
 
 	{
-	iCounter = -1;
+	m_iCounter = -1;
 	}
 
 CRowIndex::CRowIndex (SEQUENCENUMBER RowId)
