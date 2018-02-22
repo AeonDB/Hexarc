@@ -833,21 +833,40 @@ class CAeonEngine : public TSimpleEngine<CAeonEngine>
 
 // Indexing Engine Core
 
+class CRowIndexIterator
+	{
+	public:
+		CRowIndexIterator (TSortMap<CString, CIntArray> &Map);
+		CRowIndexIterator (const CRowIndexIterator &Other);
+		~CRowIndexIterator (void);
+
+		CRowIndexIterator &operator= (const CRowIndexIterator &Other);
+
+		bool HasNext(void);
+		void Next(void);
+		CIntArray &PeekPos(void);
+		const CString &PeekTerm(void);
+		void Reset(void);
+	private:
+		TSortMap<CString, CIntArray> &m_Map;
+		int iCounter;
+	};
+
 class CRowIndex
 	{
 	public:
-		~CRowIndex(void);
-		void Add(CString sTerm, int iTermPosition);
+		CRowIndex (SEQUENCENUMBER RowId);
+		CRowIndex (const CRowIndex &Other);
+		~CRowIndex (void);
+
+		CRowIndex &operator= (const CRowIndex &Other);
+
+		void Add(const CString &sTerm, int iTermPosition);
 		SEQUENCENUMBER GetRowId(void);
-		void Reset(void);
-		CString PeekTerm(void);
-		CIntArray PeekPositions(void);
-		void Next(void);
-		bool HasNext(void);
+		CRowIndexIterator Iterator(void);
 	private:
 		TSortMap<CString, CIntArray> m_Map;
 		SEQUENCENUMBER m_RowId;
-		int iCounter;
 	};
 
 class IIndexStorage
