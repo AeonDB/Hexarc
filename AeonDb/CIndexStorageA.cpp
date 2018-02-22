@@ -1,6 +1,10 @@
 #include "stdafx.h"
 
-CIndexStorageA::~CIndexStorageA(void) { }
+CIndexStorageA::CIndexStorageA (void){ }
+CIndexStorageA::CIndexStorageA (const CIndexStorageA &Other){ }
+CIndexStorageA::~CIndexStorageA (void){ }
+
+CIndexStorageA &CIndexStorageA::operator= (const CIndexStorageA &Other) { return *this; }
 
 IIndexStorage* CIndexStorageA::Clone(void)
 	{

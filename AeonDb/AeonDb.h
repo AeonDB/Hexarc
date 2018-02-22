@@ -919,7 +919,12 @@ class IPreprocess
 class CPreprocessor
 	{
 	public:
-		~CPreprocessor(void);
+		CPreprocessor (void);
+		CPreprocessor (const CPreprocessor &Other);
+		~CPreprocessor (void);
+
+		CPreprocessor &operator= (const CPreprocessor &Other);
+
 		void Append(IPreprocess *pProc);
 		void Run(CString &sData);
 	private:
@@ -935,7 +940,12 @@ struct STermOccurence
 class CTermOccurenceStream
 	{
 	public:
-		~CTermOccurenceStream(void);
+		CTermOccurenceStream (void);
+		CTermOccurenceStream (const CTermOccurenceStream &Other);
+		~CTermOccurenceStream (void);
+
+		CTermOccurenceStream &operator= (const CTermOccurenceStream &Other);
+
 		bool HasNext(void);
 		STermOccurence* Next(void);
 		void Append(CString sTerm, int iWordPosition);
@@ -966,7 +976,12 @@ class IPostprocess
 class CPostprocessor
 	{
 	public:
-		~CPostprocessor(void);
+		CPostprocessor (void);
+		CPostprocessor (const CPostprocessor &Other);
+		~CPostprocessor (void);
+
+		CPostprocessor &operator= (const CPostprocessor &Other);
+
 		void Append(IPostprocess *pProc);
 		void Run(CTermOccurenceStream &Data);
 	private:
@@ -1073,7 +1088,12 @@ class CWhitespaceTokenizer : public ITokenizer
 class CNGramsDiceCoefficient : public IStringSimilarity
 	{
 	public:
-		~CNGramsDiceCoefficient(void);
+		CNGramsDiceCoefficient (void);
+		CNGramsDiceCoefficient (const CNGramsDiceCoefficient &Other);
+		~CNGramsDiceCoefficient (void);
+
+		CNGramsDiceCoefficient &operator= (const CNGramsDiceCoefficient &Other);
+
 		IStringSimilarity* Clone(void);
 		double Compare(const CString &sA, const CString &sB);
 	};
@@ -1081,7 +1101,12 @@ class CNGramsDiceCoefficient : public IStringSimilarity
 class CAdjacencyListStorage : public IFuzzyGraphStorage
 	{
 	public:
-		~CAdjacencyListStorage(void);
+		CAdjacencyListStorage (void);
+		CAdjacencyListStorage (const CAdjacencyListStorage &Other);
+		~CAdjacencyListStorage (void);
+
+		CAdjacencyListStorage &operator= (const CAdjacencyListStorage &Other);
+
 		IFuzzyGraphStorage* Clone(void);
 		bool AddTerm(const CString &sTerm);
 		bool Create(void);
@@ -1094,7 +1119,12 @@ class CAdjacencyListStorage : public IFuzzyGraphStorage
 class CIndexStorageA : public IIndexStorage
 	{
 	public:
-		~CIndexStorageA(void);
+		CIndexStorageA (void);
+		CIndexStorageA (const CIndexStorageA &Other);
+		~CIndexStorageA (void);
+
+		CIndexStorageA &operator= (const CIndexStorageA &Other);
+
 		IIndexStorage* Clone(void);
 		bool RemoveRow(const CRowKey &Key);
 		bool InsertRow(const CRowKey &Key, const CRowIndex &Data);
@@ -1169,7 +1199,12 @@ class IRetrievalModel
 class CBooleanRetrieval : public IRetrievalModel
 	{
 	public:
-		~CBooleanRetrieval(void);
+		CBooleanRetrieval (void);
+		CBooleanRetrieval (const CBooleanRetrieval &Other);
+		~CBooleanRetrieval (void);
+
+		CBooleanRetrieval &operator= (const CBooleanRetrieval &Other);
+
 		IRetrievalModel* Clone(void);
 		bool Find(const CString &sQuery, CQueryResults *retResults);
 	};
