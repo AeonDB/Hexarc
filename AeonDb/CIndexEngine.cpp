@@ -111,7 +111,7 @@ bool CIndexEngine::IndexRow (const CRowKey &RowKey, SEQUENCENUMBER RowId, const 
 	//	Organize the term-position pairs into a one-to-many structure.
 
 	STermOccurence *Occurence;
-	CRowIndex IndexedRow;
+	CRowIndex IndexedRow(RowId);
 	while (TermOccurences.HasNext())
 		{
 		Occurence = TermOccurences.Next();
@@ -132,12 +132,12 @@ bool CIndexEngine::IndexRow (const CRowKey &RowKey, SEQUENCENUMBER RowId, const 
 
 	//	If there are any new terms, add them to the fuzzy word graph.
 
+	CRowIndexIterator iterator = IndexedRow.Iterator();
 	CString sTerm;
-	IndexedRow.Reset();
-	while (IndexedRow.HasNext())
+	while (iterator.HasNext())
 		{
-		IndexedRow.Next();
-		sTerm = IndexedRow.PeekTerm();
+		iterator.Next();
+		sTerm = iterator.PeekTerm();
 		if (!m_pFuzzyStorage->HasTerm(sTerm)) { bSuccess = bSuccess && m_pFuzzyStorage->AddTerm(sTerm); }
 		}
 

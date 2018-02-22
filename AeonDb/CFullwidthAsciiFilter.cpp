@@ -149,7 +149,7 @@ CFullwidthAsciiFilter &CFullwidthAsciiFilter::operator= (const CFullwidthAsciiFi
 	return *this;
 	}
 
-IPreprocess* CFullwidthAsciiFilter::Clone (void)
+IPreprocess *CFullwidthAsciiFilter::Clone (void)
 
 //	Clone
 //
