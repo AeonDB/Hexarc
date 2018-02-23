@@ -10,16 +10,19 @@
 
 #include "stdafx.h"
 
-CIndexEngine::CIndexEngine (CPreprocessor *pPreprocessor, ITokenizer *pTokenizer, CPostprocessor *pPostprocessor, IIndexStorage *pIndexStorage, IFuzzyGraphStorage *pFuzzyStorage)
+CIndexEngine::CIndexEngine (CPreprocessor *pPreprocessor, ITokenizer *pTokenizer, CPostprocessor *pPostprocessor, IIndexStorage *pIndexStorage, IFuzzyGraphStorage *pFuzzyStorage) :
+		m_pPreprocessor(pPreprocessor),
+		m_pTokenizer(pTokenizer),
+		m_pPostprocessor(pPostprocessor),
+		m_pIndexStorage(pIndexStorage),
+		m_pFuzzyStorage(pFuzzyStorage)
 
 //	CIndexEngine constructor
 
 	{
-	m_pPreprocessor = pPreprocessor;
-	m_pTokenizer = pTokenizer;
-	m_pPostprocessor = pPostprocessor;
-	m_pIndexStorage = pIndexStorage;
-	m_pFuzzyStorage = pFuzzyStorage;
+
+	//	Intentionally blank.
+
 	}
 
 CIndexEngine::CIndexEngine (const CIndexEngine &Engine)
@@ -110,12 +113,12 @@ bool CIndexEngine::IndexRow (const CRowKey &RowKey, SEQUENCENUMBER RowId, const 
 
 	//	Organize the term-position pairs into a one-to-many structure.
 
-	CRowIndex IndexedRow(RowId);
-	CTermOccurenceStreamIterator iterator = TermOccurences.Iterator;
-	while (iterator.HasNext())
+	CRowIndex IndexedRow(RowKey, RowId);
+	CTermOccurenceStreamIterator OccurencesIterator = TermOccurences.Iterator();
+	while (OccurencesIterator.HasNext())
 		{
-		iterator.Next();
-		IndexedRow.Add(iterator.PeekTerm, iterator.PeekPos);
+		OccurencesIterator.Next();
+		IndexedRow.Add(OccurencesIterator.PeekTerm(), OccurencesIterator.PeekPos());
 		}
 
 	//	Update an existing or insert a new mapping into the index.
@@ -132,12 +135,12 @@ bool CIndexEngine::IndexRow (const CRowKey &RowKey, SEQUENCENUMBER RowId, const 
 
 	//	If there are any new terms, add them to the fuzzy word graph.
 
-	CRowIndexIterator iterator = IndexedRow.Iterator();
+	CRowIndexIterator IndexIterator = IndexedRow.Iterator();
 	CString sTerm;
-	while (iterator.HasNext())
+	while (IndexIterator.HasNext())
 		{
-		iterator.Next();
-		sTerm = iterator.PeekTerm();
+		IndexIterator.Next();
+		sTerm = IndexIterator.PeekTerm();
 		if (!m_pFuzzyStorage->HasTerm(sTerm)) { bSuccess = bSuccess && m_pFuzzyStorage->AddTerm(sTerm); }
 		}
 

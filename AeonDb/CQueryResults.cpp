@@ -13,20 +13,30 @@
 
 #include "stdafx.h"
 
-CResultsIterator::CResultsIterator (TArray<SEQUENCENUMBER> &RowIds, TArray<CIntArray> &Positions) : m_RowIds(RowIds), m_Positions(Positions)
+CResultsIterator::CResultsIterator (TArray<SEQUENCENUMBER> &RowIds, TArray<CIntArray> &Positions) :
+		m_RowIds(RowIds),
+		m_Positions(Positions),
+		m_iCounter(0)
 
 //	CResultsIterator constructor
 
 	{
-	m_iCounter = 0;
+
+	//	Intentionally blank.
+
 	}
 
-CResultsIterator::CResultsIterator (const CResultsIterator &Other) : m_RowIds(Other.m_RowIds), m_Positions(Other.m_Positions)
+CResultsIterator::CResultsIterator (const CResultsIterator &Other) :
+		m_RowIds(Other.m_RowIds),
+		m_Positions(Other.m_Positions),
+		m_iCounter(Other.m_iCounter)
 	
 //	CResultsIterator copy constructor
 	
 	{
-	m_iCounter = Other.m_iCounter;
+
+	//	Intentionally blank.
+
 	}
 
 CResultsIterator::~CResultsIterator (void)

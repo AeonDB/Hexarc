@@ -388,6 +388,14 @@ CString CString::operator + (const CString &sStr) const
 	return CString(pBuffer + sizeof(int), PRIVATE_CONS);
 	}
 
+bool CString::operator== (const CString &sStr) const
+
+//	CString operator ==
+
+	{
+	return strEquals(*this, sStr);
+	}
+
 void CString::CleanUp (void)
 
 //	CleanUp

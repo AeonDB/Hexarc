@@ -14,20 +14,28 @@
 
 #include "stdafx.h"
 
-CRowIndexIterator::CRowIndexIterator (TSortMap<CString, CIntArray> &Map) : m_Map(Map)
+CRowIndexIterator::CRowIndexIterator (TSortMap<CString, CIntArray> &Map) :
+		m_Map(Map),
+		m_iCounter(-1)
 
 //	CRowIndexIterator constructor
 
 	{
-	m_iCounter = -1;
+
+	//	Intentionally blank.
+
 	}
 
-CRowIndexIterator::CRowIndexIterator (const CRowIndexIterator &Other) : m_Map(Other.m_Map)
+CRowIndexIterator::CRowIndexIterator (const CRowIndexIterator &Other) :
+		m_Map(Other.m_Map),
+		m_iCounter(Other.m_iCounter)
 
 //	CRowIndexIterator copy constructor
 
 	{
-	m_iCounter = Other.m_iCounter;
+
+	//	Intentionally blank.
+
 	}
 
 CRowIndexIterator::~CRowIndexIterator (void)
@@ -35,6 +43,9 @@ CRowIndexIterator::~CRowIndexIterator (void)
 //	CRowIndexIterator destructor
 
 	{
+
+	//	Intentionally blank.
+
 	}
 
 CRowIndexIterator &CRowIndexIterator::operator= (const CRowIndexIterator &Other)
@@ -95,20 +106,29 @@ void CRowIndexIterator::Reset (void)
 	m_iCounter = -1;
 	}
 
-CRowIndex::CRowIndex (SEQUENCENUMBER RowId)
+CRowIndex::CRowIndex (const CRowKey &RowKey, SEQUENCENUMBER RowId) :
+		m_RowKey(RowKey),
+		m_RowId(RowId)
 
 //	CRowIndex constructor
 
 	{
-	m_RowId = RowId;
+
+	//	Intentionally blank.
+
 	}
 
-CRowIndex::CRowIndex (const CRowIndex &Other) : m_Map(Other.m_Map)
+CRowIndex::CRowIndex (const CRowIndex &Other) :
+		m_Map(Other.m_Map),
+		m_RowKey(Other.m_RowKey),
+		m_RowId(Other.m_RowId)
 
 //	CRowIndex copy constructor
 
 	{
-	m_RowId = Other.m_RowId;
+
+	//	Intentionally blank.
+
 	}
 
 CRowIndex::~CRowIndex (void)
@@ -116,6 +136,9 @@ CRowIndex::~CRowIndex (void)
 //	CRowIndex destructor
 
 	{
+
+	//	Intentionally blank.
+
 	}
 
 CRowIndex &CRowIndex::operator= (const CRowIndex &Other)
@@ -125,6 +148,7 @@ CRowIndex &CRowIndex::operator= (const CRowIndex &Other)
 	{
 	m_Map = Other.m_Map;
 	m_RowId = Other.m_RowId;
+	m_RowKey = Other.m_RowKey;
 	}
 
 void CRowIndex::Add (const CString &sTerm, int iTermPosition)
@@ -161,6 +185,16 @@ SEQUENCENUMBER CRowIndex::GetRowId (void)
 
 	{
 	return m_RowId;
+	}
+
+CRowKey CRowIndex::GetRowKey (void)
+
+//	GetRowKey
+//
+//	Get the key of the row this object represents.
+
+	{
+	return m_RowKey;
 	}
 
 CRowIndexIterator CRowIndex::Iterator (void)

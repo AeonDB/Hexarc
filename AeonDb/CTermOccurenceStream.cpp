@@ -97,9 +97,7 @@ CString &CTermOccurenceStreamIterator::PeekTerm (void)
 	return m_Terms.GetAt(m_iCounter);
 	}
 
-CTermOccurenceStream::CTermOccurenceStream (CRowKey &RowKey, SEQUENCENUMBER RowId) :
-		m_RowKey(RowKey),
-		m_RowId(RowId)
+CTermOccurenceStream::CTermOccurenceStream ()
 
 //	CTermOccurenceStream constructor
 
@@ -110,8 +108,6 @@ CTermOccurenceStream::CTermOccurenceStream (CRowKey &RowKey, SEQUENCENUMBER RowI
 	}
 
 CTermOccurenceStream::CTermOccurenceStream (const CTermOccurenceStream &Other) :
-		m_RowKey(Other.m_RowKey),
-		m_RowId(Other.m_RowId),
 		m_Terms(Other.m_Terms),
 		m_Positions(Other.m_Positions)
 
@@ -138,8 +134,6 @@ CTermOccurenceStream &CTermOccurenceStream::operator= (const CTermOccurenceStrea
 //	CTermOccurenceStream copy assignment operator
 
 	{
-	m_RowKey = Other.m_RowKey;
-	m_RowId = Other.m_RowId;
 	m_Terms = Other.m_Terms;
 	m_Positions = Other.m_Positions;
 	}

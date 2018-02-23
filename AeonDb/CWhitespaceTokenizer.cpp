@@ -39,7 +39,7 @@ CWhitespaceTokenizer::CWhitespaceTokenizer (const CWhitespaceTokenizer &Other)
 
 	}
 
-CWhitespaceTokenizer::~CWhitespaceTokenizer ()
+CWhitespaceTokenizer::~CWhitespaceTokenizer (void)
 
 //	CWhitespaceTokenizer destructor
 

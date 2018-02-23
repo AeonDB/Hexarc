@@ -769,20 +769,115 @@ class CLargeSet
 	};
 
 template <class VALUE> class TSortSet
-{
-public:
-	~TSortSet(void) {}
-	void Add(const VALUE e) {}
-	bool Contains(const VALUE e) { return false; }
-	bool IsEmpty(void) { return true; }
-	void Remove(const VALUE e) {}
-	int Size(void) { return 0; }
-	void AddAll(const TSortSet<VALUE> &other) {}
-	void RemoveAll(const TSortSet<VALUE> &other) {}
-	void RetainAll(const TSortSet<VALUE> &other) {}
-private:
-	TArray<VALUE> data;
-};
+	{
+	public:
+		TSortSet (void) { }
+		TSortSet (const TSortSet &Other) : m_Set(Other.m_Set) { }
+		~TSortSet (void) { }
+
+		TSortSet &operator= (const TSortSet &Other)
+			{
+			m_Set = Other.m_Set;
+			return *this;
+			}
+
+		void Add (const VALUE &Value)
+			{
+			int iIndex = 0;
+			if (!BinarySearch(Value, &iIndex)) { m_Set.Insert(Value, iIndex); }
+			}
+
+		bool Contains (const VALUE &Value) const
+			{
+			int iIndex = 0;
+			return BinarySearch(Value, &iIndex);
+			}
+
+		int Size (void) const { return m_Set.GetCount(); }
+		bool IsEmpty (void) const { return Size() == 0; }
+
+		void Remove (const VALUE &Value)
+			{
+			int iIndex = 0;
+			if (BinarySearch(Value, &iIndex)) { m_Set.Delete(iIndex); }
+			}
+
+		// Set operations
+
+		void AddAll (const TSortSet<VALUE> &Other)
+			{
+			if (Other.IsEmpty()) { return; }				//	There's nothing to add.
+			if (IsEmpty()) { m_Set = Other.m_Set; return; }	//	Adding everything to an empty set is the same as copying.
+
+			m_Set.GrowToFit(Size() + Other.Size());		//	Grow big enough to hold everything.
+			
+			//	Iterate through the other array and add if unique.
+
+			for (int i = 0; i < Other.Size(); i++)
+				{
+				Add(Other.m_Set.GetAt(i));
+				}
+			}
+
+		void RemoveAll (const TSortSet<VALUE> &Other)
+			{
+			if (IsEmpty()) { return; }			//	Nothing to remove.
+			if (Other.IsEmpty()) { return; }	//	Nothing to remove.
+
+			//	Iterate through the other array and remove if present.
+
+			for (int i = 0; i < Other.Size(); i++)
+				{
+				Remove(Other.m_Set.GetAt(i));
+				}
+			}
+
+		void RetainAll (const TSortSet<VALUE> &Other)
+			{
+
+			//	Iterate through this array and remove anything unique between the two sets.
+
+			for (int i = Size() - 1; i >= 0; i--)	//	Iterate backwards because removing while iterating changes the indices.
+				{
+				if (!Other.Contains(m_Set.GetAt(i)))
+					{
+					m_Set.Delete(i);
+					}
+				}
+			}
+
+	private:
+		TArray<VALUE> m_Set;
+
+		bool BinarySearch (const VALUE &Value, int * const retiFound) const
+
+		//	Returns true and the index if found. Otherwise returns false and where to insert.
+
+			{
+			int iBoundaryA = 0;						//	Lower bound
+			int iBoundaryB = m_Set.GetCount() - 1;	//	Upper bound
+			int iPivot;								//	Index of element to check against
+			VALUE *Element;							//	Element to check against
+
+			//	When the lower bound exceeds upper bound, then the value is unique.
+
+			while (iBoundaryA <= iBoundaryB)
+				{
+
+				//	Get the index between the lower and upper bound.
+
+				iPivot = (iBoundaryB - iBoundaryA) / 2 + iBoundaryA;
+				Element = &m_Set.GetAt(iPivot);
+
+				if ((*Element) == Value) { *retiFound = iPivot; return true; }	//	Found the element.
+				else if (Value < (*Element)) { iBoundaryB = iPivot - 1; }		//	If pivot element is smaller, then insertion point should be lower than the current pivot.
+				else { iBoundaryA = iPivot + 1; }								//	If pivot is larger, then increase lower bound.
+				}
+
+			*retiFound = iBoundaryA;
+			return false;
+			}
+	};
 
 //	Sparse Array ---------------------------------------------------------------
 

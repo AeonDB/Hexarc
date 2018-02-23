@@ -855,7 +855,7 @@ class CRowIndexIterator
 class CRowIndex
 	{
 	public:
-		CRowIndex (SEQUENCENUMBER RowId);
+		CRowIndex (const CRowKey &RowKey, SEQUENCENUMBER RowId);
 		CRowIndex (const CRowIndex &Other);
 		~CRowIndex (void);
 
@@ -863,10 +863,12 @@ class CRowIndex
 
 		void Add(const CString &sTerm, int iTermPosition);
 		SEQUENCENUMBER GetRowId(void);
+		CRowKey GetRowKey(void);
 		CRowIndexIterator Iterator(void);
 	private:
 		TSortMap<CString, CIntArray> m_Map;
 		SEQUENCENUMBER m_RowId;
+		CRowKey m_RowKey;
 	};
 
 class IIndexStorage
@@ -953,7 +955,7 @@ class CTermOccurenceStreamIterator
 class CTermOccurenceStream
 	{
 	public:
-		CTermOccurenceStream (CRowKey &RowKey, SEQUENCENUMBER RowId);
+		CTermOccurenceStream (void);
 		CTermOccurenceStream (const CTermOccurenceStream &Other);
 		~CTermOccurenceStream (void);
 
@@ -962,8 +964,6 @@ class CTermOccurenceStream
 		void Append(CString sTerm, int iWordPosition);
 		CTermOccurenceStreamIterator Iterator(void);
 	private:
-		CRowKey m_RowKey;
-		SEQUENCENUMBER m_RowId;
 		CStringArray m_Terms;
 		CIntArray m_Positions;
 	};

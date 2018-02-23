@@ -57,6 +57,7 @@ class CString
 		CString &operator= (const CString &sStr);
 		CString &operator+= (const CString &sStr);
 		CString operator + (const CString &sStr) const;
+		bool operator== (const CString &sStr) const;
 
 		int GetLength (void) const;
 		inline char *GetPointer (void) const { return m_pString; }
