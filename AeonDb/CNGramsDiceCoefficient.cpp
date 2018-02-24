@@ -91,18 +91,15 @@ double CNGramsDiceCoefficient::Compare (const CString &sA, const CString &sB)
 
 	{
 	TSortSet<CString> Ngrams1 = UniqueNgrams(sA, m_iLength);
+	double rA = Ngrams1.Size();
+
 	TSortSet<CString> Ngrams2 = UniqueNgrams(sB, m_iLength);
+	double rB = Ngrams2.Size();
 
-	TSortSet<CString> Unique1 = Ngrams1;
-	Unique1.RemoveAll(Ngrams2);
+	Ngrams1.RetainAll(Ngrams2);
+	double rC = Ngrams1.Size();
 
-	TSortSet<CString> Unique2 = Ngrams2;
-	Unique2.RemoveAll(Ngrams1);
-
-	TSortSet<CString> Intersection = Ngrams1;
-	Intersection.RetainAll(Ngrams2);
-
-	return (2 * Intersection.Size()) / (Unique1.Size() + Unique2.Size());
+	return (2.0 * rC) / (rA + rB);
 	}
 
 TSortSet<CString> UniqueNgrams (const CString &sString, int iLength)
