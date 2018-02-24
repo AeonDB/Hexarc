@@ -1567,10 +1567,13 @@ int strOrder (const CString &sStr1, const CString &sStr2)
 //	have embedded 0s.
 
 	{
+
+	//	Get the lengths of both strings.
+
 	const int iLen1 = sStr1.GetLength();
 	const int iLen2 = sStr2.GetLength();
 
-	//	Prepare
+	//	Get the beginning and the end of both strings.
 
 	char *pPos1 = (LPSTR) sStr1;
 	char *pEnd1 = pPos1 + iLen1;
@@ -1578,15 +1581,16 @@ int strOrder (const CString &sStr1, const CString &sStr2)
 	char *pPos2 = (LPSTR) sStr2;
 	char *pEnd2 = pPos2 + iLen2;
 
-	//	Handle NULL
+	//	Handle NULL and empty strings.
+	//	NULL strings are equal to empty strings.
 
 	if (pPos1 == NULL || iLen1 == 0)
 		{
 		if (pPos2 == NULL || iLen2 == 0)
 			{
-			return 0;
+			return 0;	//	If both strings are empty, then they are equal.
 			}
-		return -1;
+		return -1;		//	Empty strings are less than any non-empty string.
 		}
 	else if (pPos2 == NULL || iLen2 == 0)
 		{
@@ -1597,7 +1601,8 @@ int strOrder (const CString &sStr1, const CString &sStr2)
 		return 1;
 		}
 
-	//	Compare
+	//	Both strings have at least one character.
+	//	Find the first different character.
 
 	while (pPos1 < pEnd1 && pPos2 < pEnd2)
 		{
@@ -1608,8 +1613,15 @@ int strOrder (const CString &sStr1, const CString &sStr2)
 		pPos2++;
 		}
 
+	//	Ran out of characters to compare in at least 1 string.
+	//	All characters so far were the same.
+	//	The shorter string is less than the longer string.
+
 	if (iLen1 < iLen2) { return -1; }
 	else if (iLen1 > iLen2) { return 1; }
+
+	//	Both strings had the same number of characters in the same sequence.
+
 	return 0;
 	}
 
