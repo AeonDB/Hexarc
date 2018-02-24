@@ -1,8 +1,8 @@
 #include "stdafx.h"
 
-CAdjacencyListStorage::CAdjacencyListStorage (void){ }
-CAdjacencyListStorage::CAdjacencyListStorage (const CAdjacencyListStorage &Other){ }
-CAdjacencyListStorage::~CAdjacencyListStorage (void){ }
+CAdjacencyListStorage::CAdjacencyListStorage (void) { }
+CAdjacencyListStorage::CAdjacencyListStorage (const CAdjacencyListStorage &Other) { }
+CAdjacencyListStorage::~CAdjacencyListStorage (void) { }
 
 CAdjacencyListStorage &CAdjacencyListStorage::operator= (const CAdjacencyListStorage &Other) { return *this; }
 IFuzzyGraphStorage* CAdjacencyListStorage::Clone()

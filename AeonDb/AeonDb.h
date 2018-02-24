@@ -1096,10 +1096,12 @@ class CWhitespaceTokenizer : public ITokenizer
 		CTermOccurenceStream Operation(CString &sData);
 	};
 
+TSortSet<CString> UniqueNgrams (const CString &sString, int iLength);
+
 class CNGramsDiceCoefficient : public IStringSimilarity
 	{
 	public:
-		CNGramsDiceCoefficient (void);
+		CNGramsDiceCoefficient (int iLength);
 		CNGramsDiceCoefficient (const CNGramsDiceCoefficient &Other);
 		~CNGramsDiceCoefficient (void);
 
@@ -1107,6 +1109,9 @@ class CNGramsDiceCoefficient : public IStringSimilarity
 
 		IStringSimilarity* Clone(void);
 		double Compare(const CString &sA, const CString &sB);
+
+	private:
+		int m_iLength;
 	};
 
 class CAdjacencyListStorage : public IFuzzyGraphStorage
