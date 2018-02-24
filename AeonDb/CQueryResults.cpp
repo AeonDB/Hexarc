@@ -144,6 +144,7 @@ CQueryResults &CQueryResults::operator= (const CQueryResults &Other)
 	{
 	m_RowIds = Other.m_RowIds;
 	m_Positions = Other.m_Positions;
+	return *this;
 	}
 
 void CQueryResults::Append (SEQUENCENUMBER RowId, const CIntArray &TermPositions)

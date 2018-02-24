@@ -136,6 +136,7 @@ CTermOccurenceStream &CTermOccurenceStream::operator= (const CTermOccurenceStrea
 	{
 	m_Terms = Other.m_Terms;
 	m_Positions = Other.m_Positions;
+	return *this;
 	}
 
 void CTermOccurenceStream::Append (CString sTerm, int iWordPosition)

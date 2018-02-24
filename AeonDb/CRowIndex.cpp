@@ -149,6 +149,7 @@ CRowIndex &CRowIndex::operator= (const CRowIndex &Other)
 	m_Map = Other.m_Map;
 	m_RowId = Other.m_RowId;
 	m_RowKey = Other.m_RowKey;
+	return *this;
 	}
 
 void CRowIndex::Add (const CString &sTerm, int iTermPosition)
