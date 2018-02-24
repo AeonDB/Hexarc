@@ -58,6 +58,10 @@ class CString
 		CString &operator+= (const CString &sStr);
 		CString operator + (const CString &sStr) const;
 		bool operator== (const CString &sStr) const;
+		bool operator> (const CString &sStr) const;
+		bool operator< (const CString &sStr) const;
+		bool operator>= (const CString &sStr) const;
+		bool operator<= (const CString &sStr) const;
 
 		int GetLength (void) const;
 		inline char *GetPointer (void) const { return m_pString; }
@@ -198,6 +202,7 @@ bool strIsInt (const CString &sString, int *retiValue = NULL);
 inline bool strIsWhitespace (char chChar) { return (chChar == ' ' || chChar == '\t' || chChar == '\r' || chChar == '\n'); }
 inline bool strIsWhitespace (const char *pPos) { return strIsWhitespace(*pPos); }
 int strLength (LPCSTR pStr);
+int strOrder (const CString &sStr1, const CString &sStr2);
 CString strOrdinal (int iOrdinal);
 bool strOverflowsInteger32 (const CString &sValue);
 double strParseDouble (char *pStart, double rNullResult, char **retpEnd = NULL, bool *retbNullValue = NULL);

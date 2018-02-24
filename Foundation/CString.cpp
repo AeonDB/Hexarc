@@ -393,7 +393,45 @@ bool CString::operator== (const CString &sStr) const
 //	CString operator ==
 
 	{
-	return strEquals(*this, sStr);
+	return strOrder(*this, sStr) == 0;
+	}
+
+bool CString::operator> (const CString &sStr) const
+
+//	CString operator >
+
+	{
+	return strOrder(*this, sStr) == 1;
+	}
+
+bool CString::operator< (const CString &sStr) const
+
+	//	CString operator <
+
+	{
+	return strOrder(*this, sStr) == -1;
+	}
+
+bool CString::operator>= (const CString &sStr) const
+
+//	CString operator >=
+
+	{
+
+	//	Not less than is equivalent to greater than or equal.
+
+	return !((*this) < sStr);
+	}
+
+bool CString::operator<= (const CString &sStr) const
+
+//	CString operator <=
+
+	{
+
+	//	Not greater than is equivalent to less than or equal.
+
+	return !((*this) > sStr);
 	}
 
 void CString::CleanUp (void)
@@ -1512,6 +1550,67 @@ int strLength (LPCSTR pStr)
 		pStr++;
 
 	return (int)(pStr - pStart);
+	}
+
+int strOrder (const CString &sStr1, const CString &sStr2)
+
+//	strOrder
+//
+//	Returns  1 if sStr1 >  sStr2.
+//	Returns  0 if sStr1 == sStr2.
+//	Returns -1 if sStr1 <  sStr2.
+//
+//	Uses byte-wise comparison. For ASCII characters, this would mean 0-9 is before
+//	A-Z and capital Z is before lowercase a.
+//
+//	NOTE: Some clients rely on the fact that we can compare strings even if they
+//	have embedded 0s.
+
+	{
+	const int iLen1 = sStr1.GetLength();
+	const int iLen2 = sStr2.GetLength();
+
+	//	Prepare
+
+	char *pPos1 = (LPSTR) sStr1;
+	char *pEnd1 = pPos1 + iLen1;
+
+	char *pPos2 = (LPSTR) sStr2;
+	char *pEnd2 = pPos2 + iLen2;
+
+	//	Handle NULL
+
+	if (pPos1 == NULL || iLen1 == 0)
+		{
+		if (pPos2 == NULL || iLen2 == 0)
+			{
+			return 0;
+			}
+		return -1;
+		}
+	else if (pPos2 == NULL || iLen2 == 0)
+		{
+		if (pPos1 == NULL || iLen1 == 0)
+			{
+			return 0;
+			}
+		return 1;
+		}
+
+	//	Compare
+
+	while (pPos1 < pEnd1 && pPos2 < pEnd2)
+		{
+		if (*pPos1 > *pPos2) { return 1; }
+		if (*pPos1 < *pPos2) { return -1; }
+
+		pPos1++;
+		pPos2++;
+		}
+
+	if (iLen1 < iLen2) { return -1; }
+	else if (iLen1 > iLen2) { return 1; }
+	return 0;
 	}
 
 CString strOrdinal (int iOrdinal)
