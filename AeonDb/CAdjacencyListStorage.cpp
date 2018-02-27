@@ -15,3 +15,4 @@ bool CAdjacencyListStorage::Delete(void) { return false; }
 bool CAdjacencyListStorage::HasTerm(const CString &sTerm) { return false; }
 bool CAdjacencyListStorage::Open(void) { return false; }
 bool CAdjacencyListStorage::Rebuild(void) { return false; }
+bool CAdjacencyListStorage::FindTerm (const CString &sTerm, CStringArray *retResults) { return false; }

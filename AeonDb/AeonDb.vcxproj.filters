@@ -114,6 +114,9 @@
     <ClCompile Include="CQueryResults.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CSimpleRetrieval.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AeonDb.h">

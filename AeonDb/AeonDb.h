@@ -842,11 +842,12 @@ class CRowIndexIterator
 
 		CRowIndexIterator &operator= (const CRowIndexIterator &Other);
 
-		bool HasNext(void);
-		void Next(void);
-		CIntArray &PeekPos(void);
-		const CString &PeekTerm(void);
-		void Reset(void);
+		bool HasNext (void);
+		void Next (void);
+		CIntArray &PeekPos (void);
+		const CString &PeekTerm (void);
+		void Reset (void);
+
 	private:
 		TSortMap<CString, CIntArray> &m_Map;
 		int m_iCounter;
@@ -861,10 +862,11 @@ class CRowIndex
 
 		CRowIndex &operator= (const CRowIndex &Other);
 
-		void Add(const CString &sTerm, int iTermPosition);
-		SEQUENCENUMBER GetRowId(void);
-		CRowKey GetRowKey(void);
-		CRowIndexIterator Iterator(void);
+		void Add (const CString &sTerm, int iTermPosition);
+		SEQUENCENUMBER GetRowId (void);
+		CRowKey GetRowKey (void);
+		CRowIndexIterator Iterator (void);
+
 	private:
 		TSortMap<CString, CIntArray> m_Map;
 		SEQUENCENUMBER m_RowId;
@@ -874,48 +876,66 @@ class CRowIndex
 class IIndexStorage
 	{
 	public:
-		virtual ~IIndexStorage(void) { }
-		virtual IIndexStorage* Clone(void) = 0;
-		virtual bool RemoveRow(const CRowKey &Key) = 0;
-		virtual bool InsertRow(const CRowKey &Key, const CRowIndex &Data) = 0;
-		virtual bool UpdateRow(const CRowKey &Key, const CRowIndex &Data) = 0;
-		virtual bool HasRow(const CRowKey &Key) = 0;
-		virtual bool HasTerm(const CString &sTerm) = 0;
-		virtual bool GetLastIndexed(SEQUENCENUMBER *retRowId) = 0;
-		virtual bool SetLastIndexed(SEQUENCENUMBER RowID) = 0;
-		virtual bool Open(void) = 0;
-		virtual bool Create(void) = 0;
-		virtual bool Delete(void) = 0;
+		IIndexStorage (void) { }
+		virtual ~IIndexStorage (void) { }
+
+		virtual IIndexStorage *Clone (void) = 0;
+
+		virtual bool GetLastIndexed (SEQUENCENUMBER *retRowId) = 0;
+		virtual bool SetLastIndexed (SEQUENCENUMBER RowID) = 0;
+
+		virtual bool GetTermPos (SEQUENCENUMBER RowId, const CString &sTerm, CIntArray *retPositions) = 0;
+		virtual bool FindTerm (const CString &sTerm, TSortSet<SEQUENCENUMBER> *retResults) = 0;
+		virtual bool HasRow (const CRowKey &Key) = 0;
+		virtual bool HasTerm (const CString &sTerm) = 0;
+		virtual bool InsertRow (const CRowKey &Key, const CRowIndex &Data) = 0;
+		virtual bool RemoveRow (const CRowKey &Key) = 0;
+		virtual bool UpdateRow (const CRowKey &Key, const CRowIndex &Data) = 0;
+
+		virtual bool Create (void) = 0;
+		virtual bool Delete (void) = 0;
+		virtual bool Open (void) = 0;
+
+	private:
+		IIndexStorage (const IIndexStorage &Other) { }
+		IIndexStorage &operator= (const IIndexStorage &Other) { }
 	};
 
 class IStringSimilarity
 	{
 	public:
-		virtual ~IStringSimilarity(void) { }
-		virtual IStringSimilarity* Clone(void) = 0;
-		virtual double Compare(const CString &sA, const CString &sB) = 0;
+		virtual ~IStringSimilarity (void) { }
+
+		virtual IStringSimilarity *Clone (void) = 0;
+
+		virtual double Compare (const CString &sA, const CString &sB) = 0;
 	};
 
 class IFuzzyGraphStorage
 	{
 	public:
-		virtual ~IFuzzyGraphStorage(void) { }
+		virtual ~IFuzzyGraphStorage (void) { }
 
-		virtual IFuzzyGraphStorage* Clone(void) = 0;
-		virtual bool AddTerm(const CString &sTerm) = 0;
-		virtual bool Create(void) = 0;
-		virtual bool Delete(void) = 0;
-		virtual bool HasTerm(const CString &sTerm) = 0;
-		virtual bool Open(void) = 0;
-		virtual bool Rebuild(void) = 0;
+		virtual IFuzzyGraphStorage *Clone (void) = 0;
+
+		virtual bool AddTerm (const CString &sTerm) = 0;
+		virtual bool FindTerm (const CString &sTerm, CStringArray *retResults) = 0;
+		virtual bool HasTerm (const CString &sTerm) = 0;
+
+		virtual bool Create (void) = 0;
+		virtual bool Delete (void) = 0;
+		virtual bool Open (void) = 0;
+		virtual bool Rebuild (void) = 0;
 	};
 
 class IPreprocess
 	{
 	public:
-		virtual ~IPreprocess(void) { }
-		virtual IPreprocess* Clone(void) = 0;
-		virtual void Operation(CString &sData) = 0;
+		virtual ~IPreprocess (void) { }
+
+		virtual IPreprocess *Clone (void) = 0;
+
+		virtual void Operation (CString &sData) = 0;
 	};
 
 class CPreprocessor
@@ -927,10 +947,11 @@ class CPreprocessor
 
 		CPreprocessor &operator= (const CPreprocessor &Other);
 
-		void Append(IPreprocess *pProc);
-		void Run(CString &sData);
+		void Append (IPreprocess *pProc);
+		void Run (CString &sData);
+
 	private:
-		TArray<IPreprocess*> m_Processes;
+		TArray<IPreprocess *> m_Processes;
 	};
 
 class CTermOccurenceStreamIterator
@@ -942,10 +963,11 @@ class CTermOccurenceStreamIterator
 
 		CTermOccurenceStreamIterator &operator= (const CTermOccurenceStreamIterator &Other);
 
-		bool HasNext(void);
-		void Next(void);
-		int &PeekPos(void);
-		CString &PeekTerm(void);
+		bool HasNext (void);
+		void Next (void);
+		int &PeekPos (void);
+		CString &PeekTerm (void);
+
 	private:
 		CStringArray &m_Terms;
 		CIntArray &m_Positions;
@@ -961,8 +983,9 @@ class CTermOccurenceStream
 
 		CTermOccurenceStream &operator= (const CTermOccurenceStream &Other);
 
-		void Append(CString sTerm, int iWordPosition);
-		CTermOccurenceStreamIterator Iterator(void);
+		void Append (CString sTerm, int iWordPosition);
+		CTermOccurenceStreamIterator Iterator (void);
+
 	private:
 		CStringArray m_Terms;
 		CIntArray m_Positions;
@@ -971,17 +994,21 @@ class CTermOccurenceStream
 class ITokenizer
 	{
 	public:
-		virtual ~ITokenizer(void) { }
-		virtual ITokenizer* Clone(void) = 0;
-		virtual CTermOccurenceStream Operation(CString &sData) = 0;
+		virtual ~ITokenizer (void) { }
+
+		virtual ITokenizer *Clone (void) = 0;
+
+		virtual CTermOccurenceStream Operation (CString &sData) = 0;
 	};
 
 class IPostprocess
 	{
 	public:
-		virtual ~IPostprocess(void) { }
-		virtual IPostprocess* Clone(void) = 0;
-		virtual void Operation(CTermOccurenceStream &Data) = 0;
+		virtual ~IPostprocess (void) { }
+
+		virtual IPostprocess *Clone (void) = 0;
+
+		virtual void Operation (CTermOccurenceStream &Data) = 0;
 	};
 
 class CPostprocessor
@@ -993,10 +1020,11 @@ class CPostprocessor
 
 		CPostprocessor &operator= (const CPostprocessor &Other);
 
-		void Append(IPostprocess *pProc);
-		void Run(CTermOccurenceStream &Data);
+		void Append (IPostprocess *pProc);
+		void Run (CTermOccurenceStream &Data);
+
 	private:
-		TArray<IPostprocess*> m_Processes;
+		TArray<IPostprocess *> m_Processes;
 	};
 
 class CIndexEngine
@@ -1009,12 +1037,13 @@ class CIndexEngine
 		CIndexEngine &operator= (const CIndexEngine &Engine);
 
 		bool GetLastIndexed (SEQUENCENUMBER *retRowId);
-		bool IndexRow (const CRowKey &RowKey, SEQUENCENUMBER RowId, const CDatum &dValue);
-		bool Open (void);
 		bool SetLastIndexed (SEQUENCENUMBER RowId);
 
+		bool IndexRow (const CRowKey &RowKey, SEQUENCENUMBER RowId, const CDatum &dValue);
+		bool Open (void);
+
 	private:
-		CPreprocessor * m_pPreprocessor;
+		CPreprocessor *m_pPreprocessor;
 		ITokenizer *m_pTokenizer;
 		CPostprocessor *m_pPostprocessor;
 		IIndexStorage *m_pIndexStorage;
@@ -1024,9 +1053,11 @@ class CIndexEngine
 class IIndexEngineFactory
 	{
 	public:
-		virtual ~IIndexEngineFactory(void) { }
-		virtual IIndexEngineFactory* Clone(void) = 0;
-		virtual CIndexEngine Create(void) = 0;
+		virtual ~IIndexEngineFactory (void) { }
+
+		virtual IIndexEngineFactory *Clone (void) = 0;
+
+		virtual CIndexEngine Create (void) = 0;
 	};
 
 // Indexing Engine Concrete Algorithms
@@ -1041,6 +1072,7 @@ class CFullwidthAsciiFilter : public IPreprocess
 		CFullwidthAsciiFilter &operator= (const CFullwidthAsciiFilter &Other);
 
 		IPreprocess *Clone (void);
+
 		void Operation (CString &sData);
 	};
 
@@ -1054,6 +1086,7 @@ class CPunctuationFilter : public IPreprocess
 		CPunctuationFilter &operator= (const CPunctuationFilter &Other);
 
 		IPreprocess *Clone (void);
+
 		void Operation (CString &sData);
 	};
 
@@ -1067,6 +1100,7 @@ class CToLowercase : public IPostprocess
 		CToLowercase &operator= (const CToLowercase &Other);
 
 		IPostprocess *Clone (void);
+
 		void Operation (CTermOccurenceStream &Data);
 	};
 
@@ -1080,7 +1114,8 @@ class CExtendedLatinFilter : public IPostprocess
 		CExtendedLatinFilter &operator= (const CExtendedLatinFilter &Other);
 
 		IPostprocess *Clone (void);
-		void Operation(CTermOccurenceStream &Data);
+
+		void Operation (CTermOccurenceStream &Data);
 	};
 
 class CWhitespaceTokenizer : public ITokenizer
@@ -1088,12 +1123,13 @@ class CWhitespaceTokenizer : public ITokenizer
 	public:
 		CWhitespaceTokenizer (void);
 		CWhitespaceTokenizer (const CWhitespaceTokenizer &Other);
-		~CWhitespaceTokenizer(void);
+		~CWhitespaceTokenizer (void);
 
 		CWhitespaceTokenizer &operator= (const CWhitespaceTokenizer &Other);
 
-		ITokenizer *Clone(void);
-		CTermOccurenceStream Operation(CString &sData);
+		ITokenizer *Clone (void);
+
+		CTermOccurenceStream Operation (CString &sData);
 	};
 
 TSortSet<CString> UniqueNgrams (const CString &sString, int iLength);
@@ -1107,8 +1143,9 @@ class CNGramsDiceCoefficient : public IStringSimilarity
 
 		CNGramsDiceCoefficient &operator= (const CNGramsDiceCoefficient &Other);
 
-		IStringSimilarity* Clone(void);
-		double Compare(const CString &sA, const CString &sB);
+		IStringSimilarity *Clone (void);
+
+		double Compare (const CString &sA, const CString &sB);
 
 	private:
 		int m_iLength;
@@ -1123,13 +1160,16 @@ class CAdjacencyListStorage : public IFuzzyGraphStorage
 
 		CAdjacencyListStorage &operator= (const CAdjacencyListStorage &Other);
 
-		IFuzzyGraphStorage* Clone(void);
-		bool AddTerm(const CString &sTerm);
-		bool Create(void);
-		bool Delete(void);
-		bool HasTerm(const CString &sTerm);
-		bool Open(void);
-		bool Rebuild(void);
+		IFuzzyGraphStorage *Clone (void);
+
+		bool AddTerm (const CString &sTerm);
+		bool FindTerm (const CString &sTerm, CStringArray *retResults);
+		bool HasTerm (const CString &sTerm);
+
+		bool Create (void);
+		bool Delete (void);
+		bool Open (void);
+		bool Rebuild (void);
 	};
 
 class CIndexStorageA : public IIndexStorage
@@ -1141,17 +1181,22 @@ class CIndexStorageA : public IIndexStorage
 
 		CIndexStorageA &operator= (const CIndexStorageA &Other);
 
-		IIndexStorage* Clone(void);
-		bool RemoveRow(const CRowKey &Key);
-		bool InsertRow(const CRowKey &Key, const CRowIndex &Data);
-		bool UpdateRow(const CRowKey &Key, const CRowIndex &Data);
-		bool HasRow(const CRowKey &Key);
-		bool HasTerm(const CString &sTerm);
-		bool GetLastIndexed(SEQUENCENUMBER *retRowId);
-		bool SetLastIndexed(SEQUENCENUMBER RowID);
-		bool Open(void);
-		bool Create(void);
-		bool Delete(void);
+		IIndexStorage *Clone (void);
+
+		bool GetTermPos (SEQUENCENUMBER RowId, const CString &sTerm, CIntArray *retPositions);
+		bool FindTerm (const CString &sTerm, TSortSet<SEQUENCENUMBER> *retResults);
+		bool HasRow (const CRowKey &Key);
+		bool HasTerm (const CString &sTerm);
+		bool InsertRow (const CRowKey &Key, const CRowIndex &Data);
+		bool RemoveRow (const CRowKey &Key);
+		bool UpdateRow (const CRowKey &Key, const CRowIndex &Data);
+
+		bool GetLastIndexed (SEQUENCENUMBER *retRowId);
+		bool SetLastIndexed (SEQUENCENUMBER RowID);
+
+		bool Create (void);
+		bool Delete (void);
+		bool Open (void);
 	};
 
 class CProseIndexEngineFactory : public IIndexEngineFactory
@@ -1163,7 +1208,8 @@ class CProseIndexEngineFactory : public IIndexEngineFactory
 
 		CProseIndexEngineFactory &operator= (const CProseIndexEngineFactory &Factory);
 
-		IIndexEngineFactory* Clone(void);
+		IIndexEngineFactory *Clone (void);
+
 		CIndexEngine Create (void);
 	};
 
@@ -1182,6 +1228,7 @@ class CResultsIterator
 		void Next (void);
 		SEQUENCENUMBER &PeekRowId (void);
 		CIntArray &PeekTermPositions (void);
+
 	private:
 		int m_iCounter;
 		TArray<SEQUENCENUMBER> &m_RowIds;
@@ -1199,6 +1246,7 @@ class CQueryResults
 
 		void Append (SEQUENCENUMBER RowId, const CIntArray &TermPositions);
 		CResultsIterator *Iterator (void);
+
 	private:
 		TArray<SEQUENCENUMBER> m_RowIds;
 		TArray<CIntArray> m_Positions;
@@ -1207,9 +1255,11 @@ class CQueryResults
 class IRetrievalModel
 	{
 	public:
-		virtual ~IRetrievalModel(void) { }
-		virtual IRetrievalModel* Clone(void) = 0;
-		virtual bool Find(const CString &sQuery, CQueryResults *retResults) = 0;
+		virtual ~IRetrievalModel (void) { }
+
+		virtual IRetrievalModel *Clone (void) = 0;
+
+		virtual bool Find (const CString &sQuery, bool bFuzzy, CQueryResults *retResults) = 0;
 	};
 
 class CBooleanRetrieval : public IRetrievalModel
@@ -1221,6 +1271,25 @@ class CBooleanRetrieval : public IRetrievalModel
 
 		CBooleanRetrieval &operator= (const CBooleanRetrieval &Other);
 
-		IRetrievalModel* Clone(void);
-		bool Find(const CString &sQuery, CQueryResults *retResults);
+		IRetrievalModel *Clone (void);
+
+		bool Find (const CString &sQuery, bool bFuzzy, CQueryResults *retResults);
+	};
+
+class CSimpleRetrieval : public IRetrievalModel
+	{
+	public:
+		CSimpleRetrieval (IIndexStorage *pIndexStorage, IFuzzyGraphStorage *pFuzzyStorage);
+		CSimpleRetrieval (const CSimpleRetrieval &Other);
+		~CSimpleRetrieval (void);
+
+		CSimpleRetrieval &operator= (const CSimpleRetrieval &Other);
+
+		IRetrievalModel *Clone (void);
+
+		bool Find (const CString &sQuery, bool bFuzzy, CQueryResults *retResults);
+
+	private:
+		IIndexStorage *m_pIndexStorage;
+		IFuzzyGraphStorage *m_pFuzzyStorage;
 	};

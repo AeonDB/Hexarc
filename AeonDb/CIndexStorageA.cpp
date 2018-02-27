@@ -6,11 +6,13 @@ CIndexStorageA::~CIndexStorageA (void) { }
 
 CIndexStorageA &CIndexStorageA::operator= (const CIndexStorageA &Other) { return *this; }
 
-IIndexStorage* CIndexStorageA::Clone(void)
+IIndexStorage *CIndexStorageA::Clone(void)
 	{
 	return new CIndexStorageA();
 	}
 
+bool CIndexStorageA::GetTermPos (SEQUENCENUMBER RowId, const CString &sTerm, CIntArray *retPositions) { return false; }
+bool CIndexStorageA::FindTerm (const CString &sTerm, TSortSet<SEQUENCENUMBER> *retResults) { return false; }
 bool CIndexStorageA::RemoveRow(const CRowKey &Key) { return false; }
 bool CIndexStorageA::InsertRow(const CRowKey &Key, const CRowIndex &Data) { return false; }
 bool CIndexStorageA::UpdateRow(const CRowKey &Key, const CRowIndex &Data) { return false; }
