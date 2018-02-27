@@ -793,7 +793,11 @@ template <class VALUE> class TSortSet
 			return BinarySearch(Value, &iIndex);
 			}
 
-		int Size (void) const { return m_Set.GetCount(); }
+		VALUE &Get (int iIndex) const
+			{
+			return m_Set.GetAt(iIndex);
+			}
+
 		bool IsEmpty (void) const { return Size() == 0; }
 
 		void Remove (const VALUE &Value)
@@ -801,6 +805,8 @@ template <class VALUE> class TSortSet
 			int iIndex = 0;
 			if (BinarySearch(Value, &iIndex)) { m_Set.Delete(iIndex); }
 			}
+
+		int Size (void) const { return m_Set.GetCount(); }
 
 		// Set operations
 
