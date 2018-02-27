@@ -666,6 +666,7 @@ class CAeonTable
 		bool RecoverTableRows (CString *retsError);
 		bool Recreate (IArchonProcessCtx *pProcess, CDatum dDesc, bool *retbUpdated, CString *retsError);
 		bool Save (CString *retsError);
+		void UpdateFTIndex (void);
 		AEONERR UploadFile (CMsgProcessCtx &Ctx, const CString &sSessionID, const CString &sFilePath, CDatum dUploadDesc, CDatum dData, int *retiComplete, CString *retsError);
 
 		static CDatum GetDimensionDesc (SDimensionDesc &Dim);

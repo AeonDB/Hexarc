@@ -4615,6 +4615,91 @@ void CAeonTable::SetDimensionDesc (CComplexStruct *pDesc, const SDimensionDesc &
 		}
 	}
 
+void CAeonTable::UpdateFTIndex (void)
+
+//	UpdateFTIndex
+//
+//	Update the full-text index for a table.
+
+	{
+	//	Lock the table from other threads.
+
+	CSmartLock Lock(m_cs);
+
+	//	Use a decorator factory to create a specialized indexing engine.
+
+	CIndexEngine FTIndex = CProseIndexEngineFactory().Create();
+
+	//   If the index already exists, we load it. Otherwise, we
+	//   create an empty index. This method returns false only
+	//   if it fails.
+
+	if (!FTIndex.Open()) { return; }	//	TODO
+
+	//	Get the primary view (so we can iterate over its records).
+
+	CAeonView *pPrimaryView = m_Views.GetAt(DEFAULT_VIEW);
+
+	//   Create a row iterator to loop over all rows in the primary
+	//   view.
+	//
+	//   NOTE: This iterator is thread-safe as long as we do not
+	//   create new segments while we’re indexing. For the demo,
+	//   that’s not a problem. For the final code, we will do this
+	//   step in the housekeeping thread.
+
+	CRowIterator Rows;
+	pPrimaryView->InitIterator(&Rows);
+
+	//   Now that we have a row iterator, we can unlock the table.
+	//   As long as no new segments are created, we’re OK.
+
+	Lock.Unlock();
+
+	//	Get the ID of the last row we've indexed.
+
+	SEQUENCENUMBER NewFTSeq = 0;
+	FTIndex.GetLastIndexed(&NewFTSeq);
+
+	//	Loop over all rows.
+
+	while (Rows.HasMore())
+		{
+		CRowKey Key;
+		CDatum dValue;
+		SEQUENCENUMBER RowSeq;
+
+		//	Get the row from the table.
+
+		Rows.GetNextRow(&Key, &dValue, &RowSeq);
+
+		//   If this row’s sequence number is less than or equal to
+		//   the FT Index sequence number, then it means that we’ve
+		//   already indexed it. For a brand new FT Index, the sequence
+		//   number starts out at 0.
+
+		if (RowSeq <= NewFTSeq)
+			continue;
+
+		//   Otherwise, we need to index this row.
+		//   dValue is the data for the row. Assume that it is a record
+		//   with one or more fields.
+
+		FTIndex.IndexRow(Key, dValue, RowSeq);
+
+		//   We keep track of the highest sequence number we’ve seen.
+
+		if (RowSeq > NewFTSeq)
+			NewFTSeq = RowSeq;
+		}
+
+	//   Now store the sequence number back in the index. The next time
+	//   we update the index, we won’t process records that we already
+	//   processed (unless they were updated).
+
+	FTIndex.SetLastIndexed(NewFTSeq);
+	}
+
 AEONERR CAeonTable::UploadFile (CMsgProcessCtx &Ctx, const CString &sSessionID, const CString &sFilePath, CDatum dUploadDesc, CDatum dData, int *retiComplete, CString *retsError)
 
 //	UploadFile
