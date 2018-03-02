@@ -63,12 +63,9 @@ bool CResultsIterator::HasNext (void)
 //
 //	Returns true if there is at least one more element after this current element.
 
-	{
-
-	// TODO implement this function.
-
-	return false; // change this
-	}
+{
+	return m_iCounter < m_RowIds.GetCount() - 1;
+}
 
 void CResultsIterator::Next (void)
 
@@ -77,9 +74,7 @@ void CResultsIterator::Next (void)
 //	Iterates to the next element.
 
 	{
-
-	// TODO implement this function.
-
+	m_iCounter++;
 	}
 
 SEQUENCENUMBER &CResultsIterator::PeekRowId (void)
@@ -89,10 +84,7 @@ SEQUENCENUMBER &CResultsIterator::PeekRowId (void)
 //	Returns the row ID of the current result.
 
 	{
-
-	// TODO implement this function.
-
-	return *(new SEQUENCENUMBER(0)); // change this
+	return m_RowIds.GetAt(m_iCounter);
 	}
 
 CIntArray &CResultsIterator::PeekTermPositions (void)
@@ -102,10 +94,7 @@ CIntArray &CResultsIterator::PeekTermPositions (void)
 //	Returns the search term positions of the current result.
 	
 	{
-
-	// TODO implement this function.
-
-	return *(new CIntArray()); // change this
+	return m_Positions.GetAt(m_iCounter);
 	}
 
 CQueryResults::CQueryResults (void)
