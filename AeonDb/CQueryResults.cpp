@@ -21,9 +21,7 @@ CResultsIterator::CResultsIterator (TArray<SEQUENCENUMBER> &RowIds, TArray<CIntA
 //	CResultsIterator constructor
 
 	{
-
 	//	Intentionally blank.
-
 	}
 
 CResultsIterator::CResultsIterator (const CResultsIterator &Other) :
@@ -34,9 +32,7 @@ CResultsIterator::CResultsIterator (const CResultsIterator &Other) :
 //	CResultsIterator copy constructor
 	
 	{
-
 	//	Intentionally blank.
-
 	}
 
 CResultsIterator::~CResultsIterator (void)
@@ -44,9 +40,7 @@ CResultsIterator::~CResultsIterator (void)
 //	CResultsIterator destructor
 
 	{
-
 	// Intentionally blank.
-
 	}
 
 CResultsIterator &CResultsIterator::operator= (const CResultsIterator &Other)
@@ -102,9 +96,7 @@ CQueryResults::CQueryResults (void)
 //	CQueryResults constructor
 
 	{
-
 	// Intentionally blank.
-
 	}
 
 CQueryResults::CQueryResults (const CQueryResults &Other)
@@ -121,9 +113,7 @@ CQueryResults::~CQueryResults (void)
 //	CQueryResults destructor
 
 	{
-
 	// Intentionally blank.
-
 	}
 
 CQueryResults &CQueryResults::operator= (const CQueryResults &Other)
@@ -143,9 +133,7 @@ void CQueryResults::Append (SEQUENCENUMBER RowId, const CIntArray &TermPositions
 //	Adds the row ID and its search term positions to the last index.
 
 	{
-
 	// TODO implement this.
-
 	}
 
 CResultsIterator *CQueryResults::Iterator (void)
