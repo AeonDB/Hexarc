@@ -13,7 +13,7 @@
 
 #include "stdafx.h"
 
-CTermOccurenceStreamIterator::CTermOccurenceStreamIterator (CStringArray &Terms, CIntArray &Positions) :
+CTermOccurenceStreamIterator::CTermOccurenceStreamIterator (CStringArray Terms, CIntArray Positions) :
 		m_Terms(Terms),
 		m_Positions(Positions),
 		m_iCounter(-1)
@@ -77,7 +77,7 @@ void CTermOccurenceStreamIterator::Next (void)
 	m_iCounter++;
 	}
 
-int &CTermOccurenceStreamIterator::PeekPos (void)
+int CTermOccurenceStreamIterator::PeekPos (void)
 
 //	PeekPos
 //
@@ -87,7 +87,7 @@ int &CTermOccurenceStreamIterator::PeekPos (void)
 	return m_Positions.GetAt(m_iCounter);
 	}
 
-CString &CTermOccurenceStreamIterator::PeekTerm (void)
+CString CTermOccurenceStreamIterator::PeekTerm (void)
 
 //	PeekTerm
 //

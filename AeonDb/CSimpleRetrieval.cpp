@@ -57,7 +57,7 @@ IRetrievalModel *CSimpleRetrieval::Clone (void)
 	return new CSimpleRetrieval(m_pIndexStorage->Clone(), m_pFuzzyStorage->Clone());
 	}
 
-bool CSimpleRetrieval::Find (const CString &sQuery, bool bFuzzy, CQueryResults *retResults)
+bool CSimpleRetrieval::Find (CString sQuery, bool bFuzzy, CQueryResults *retResults)
 
 //	Find
 //

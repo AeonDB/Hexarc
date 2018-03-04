@@ -87,17 +87,19 @@ bool CIndexEngine::GetLastIndexed (SEQUENCENUMBER *retRowId)
 	return m_pIndexStorage->GetLastIndexed(retRowId);
 	}
 
-bool CIndexEngine::IndexRow (const CRowKey &RowKey, SEQUENCENUMBER RowId, const CDatum &dValue)
+bool CIndexEngine::IndexRow (CRowKey RowKey, SEQUENCENUMBER RowId, CDatum dValue)
 
 //	IndexRow
 //
 //	Indexes a row and updates the fuzzy word graph. Returns false if fails.
 
 	{
-
+	CSmartLock Lock(m_cs);
 	//	Data needs to be in a string.
 
-	CString sData = dValue.AsString();
+	CDatum dField = dValue.GetElement(0);
+	CString sData = dField;
+	printf(sData + "\n");
 
 	//	Pass the string to the preprocessor.
 
@@ -124,17 +126,22 @@ bool CIndexEngine::IndexRow (const CRowKey &RowKey, SEQUENCENUMBER RowId, const 
 	//	Update an existing or insert a new mapping into the index.
 
 	bool bSuccess = false;
-	if (m_pIndexStorage->HasRow(RowKey))
+	printf("before\n");
+	bool bHasRow = m_pIndexStorage->HasRow(RowKey);
+	printf("after\n");
+	if (bHasRow)
 		{
+		printf("row exists\n");
 		bSuccess = m_pIndexStorage->UpdateRow(RowKey, IndexedRow);
 		}
 	else
 		{
+		printf("row does not exist\n");
 		bSuccess = m_pIndexStorage->InsertRow(RowKey, IndexedRow);
 		}
 
 	//	If there are any new terms, add them to the fuzzy word graph.
-
+	
 	CRowIndexIterator IndexIterator = IndexedRow.Iterator();
 	CString sTerm;
 	while (IndexIterator.HasNext())

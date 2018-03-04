@@ -81,7 +81,7 @@ IStringSimilarity *CNGramsDiceCoefficient::Clone (void)
 	return new CNGramsDiceCoefficient(*this);
 	}
 
-double CNGramsDiceCoefficient::Compare (const CString &sA, const CString &sB)
+double CNGramsDiceCoefficient::Compare (CString sA, CString sB)
 
 //	Compare
 //
@@ -102,7 +102,7 @@ double CNGramsDiceCoefficient::Compare (const CString &sA, const CString &sB)
 	return (2.0 * rC) / (rA + rB);
 	}
 
-TSortSet<CString> UniqueNgrams (const CString &sString, int iLength)
+TSortSet<CString> UniqueNgrams (CString sString, int iLength)
 
 //	UniqueNgrams
 //

@@ -13,7 +13,7 @@
 
 #include "stdafx.h"
 
-CResultsIterator::CResultsIterator (TArray<SEQUENCENUMBER> &RowIds, TArray<CIntArray> &Positions) :
+CResultsIterator::CResultsIterator (TArray<SEQUENCENUMBER> RowIds, TArray<CIntArray> Positions) :
 		m_RowIds(RowIds),
 		m_Positions(Positions),
 		m_iCounter(-1)
@@ -71,7 +71,7 @@ void CResultsIterator::Next (void)
 	m_iCounter++;
 	}
 
-SEQUENCENUMBER &CResultsIterator::PeekRowId (void)
+SEQUENCENUMBER CResultsIterator::PeekRowId (void)
 
 //	PeekRowId
 //
@@ -81,7 +81,7 @@ SEQUENCENUMBER &CResultsIterator::PeekRowId (void)
 	return m_RowIds.GetAt(m_iCounter);
 	}
 
-CIntArray &CResultsIterator::PeekTermPositions (void)
+CIntArray CResultsIterator::PeekTermPositions (void)
 
 //	PeekTermPositions
 //
@@ -126,7 +126,7 @@ CQueryResults &CQueryResults::operator= (const CQueryResults &Other)
 	return *this;
 	}
 
-void CQueryResults::Append (SEQUENCENUMBER RowId, const CIntArray &TermPositions)
+void CQueryResults::Append (SEQUENCENUMBER RowId, CIntArray TermPositions)
 
 //	Append
 //

@@ -14,7 +14,7 @@
 
 #include "stdafx.h"
 
-CRowIndexIterator::CRowIndexIterator (TSortMap<CString, CIntArray> &Map) :
+CRowIndexIterator::CRowIndexIterator (TSortMap<CString, CIntArray> Map) :
 		m_Map(Map),
 		m_iCounter(-1)
 
@@ -76,7 +76,7 @@ void CRowIndexIterator::Next (void)
 	m_iCounter++;
 	}
 
-CIntArray &CRowIndexIterator::PeekPos (void)
+CIntArray CRowIndexIterator::PeekPos (void)
 
 //	PeekPos
 //
@@ -86,7 +86,7 @@ CIntArray &CRowIndexIterator::PeekPos (void)
 	return m_Map.GetValue(m_iCounter);
 	}
 
-const CString &CRowIndexIterator::PeekTerm (void)
+const CString CRowIndexIterator::PeekTerm (void)
 
 //	PeekTerm
 //
@@ -106,7 +106,7 @@ void CRowIndexIterator::Reset (void)
 	m_iCounter = -1;
 	}
 
-CRowIndex::CRowIndex (const CRowKey &RowKey, SEQUENCENUMBER RowId) :
+CRowIndex::CRowIndex (CRowKey RowKey, SEQUENCENUMBER RowId) :
 		m_RowKey(RowKey),
 		m_RowId(RowId)
 
@@ -152,13 +152,14 @@ CRowIndex &CRowIndex::operator= (const CRowIndex &Other)
 	return *this;
 	}
 
-void CRowIndex::Add (const CString &sTerm, int iTermPosition)
+void CRowIndex::Add (CString sTerm, int iTermPosition)
 
 //	Add
 //
 //	Insert the index term and its position into the row index.
 
 	{
+	printf(strFromInt(iTermPosition) + "\t" + sTerm + "\n");
 
 	//	If the index term already exists, get its position list and insert a new position.
 

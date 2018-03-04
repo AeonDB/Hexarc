@@ -838,7 +838,7 @@ class CAeonEngine : public TSimpleEngine<CAeonEngine>
 class CRowIndexIterator
 	{
 	public:
-		CRowIndexIterator (TSortMap<CString, CIntArray> &Map);
+		CRowIndexIterator (TSortMap<CString, CIntArray> Map);
 		CRowIndexIterator (const CRowIndexIterator &Other);
 		~CRowIndexIterator (void);
 
@@ -846,25 +846,25 @@ class CRowIndexIterator
 
 		bool HasNext (void);
 		void Next (void);
-		CIntArray &PeekPos (void);
-		const CString &PeekTerm (void);
+		CIntArray PeekPos (void);
+		const CString PeekTerm (void);
 		void Reset (void);
 
 	private:
-		TSortMap<CString, CIntArray> &m_Map;
+		TSortMap<CString, CIntArray> m_Map;
 		int m_iCounter;
 	};
 
 class CRowIndex
 	{
 	public:
-		CRowIndex (const CRowKey &RowKey, SEQUENCENUMBER RowId);
+		CRowIndex (CRowKey RowKey, SEQUENCENUMBER RowId);
 		CRowIndex (const CRowIndex &Other);
 		~CRowIndex (void);
 
 		CRowIndex &operator= (const CRowIndex &Other);
 
-		void Add (const CString &sTerm, int iTermPosition);
+		void Add (CString sTerm, int iTermPosition);
 		TSortMap<CString, CIntArray> GetMap (void);
 		SEQUENCENUMBER GetRowId (void);
 		CRowKey GetRowKey (void);
@@ -887,13 +887,13 @@ class IIndexStorage
 		virtual bool GetLastIndexed (SEQUENCENUMBER *retRowId) = 0;
 		virtual bool SetLastIndexed (SEQUENCENUMBER RowID) = 0;
 
-		virtual bool GetTermPos (SEQUENCENUMBER RowId, const CString &sTerm, CIntArray *retPositions) = 0;
-		virtual bool FindTerm (const CString &sTerm, TSortSet<SEQUENCENUMBER> *retResults) = 0;
-		virtual bool HasRow (const CRowKey &Key) = 0;
-		virtual bool HasTerm (const CString &sTerm) = 0;
-		virtual bool InsertRow (const CRowKey &Key, CRowIndex &Data) = 0;
-		virtual bool RemoveRow (const CRowKey &Key) = 0;
-		virtual bool UpdateRow (const CRowKey &Key, const CRowIndex &Data) = 0;
+		virtual bool GetTermPos (SEQUENCENUMBER RowId, CString sTerm, CIntArray *retPositions) = 0;
+		virtual bool FindTerm (CString sTerm, TSortSet<SEQUENCENUMBER> *retResults) = 0;
+		virtual bool HasRow (CRowKey Key) = 0;
+		virtual bool HasTerm (CString sTerm) = 0;
+		virtual bool InsertRow (CRowKey Key, CRowIndex Data) = 0;
+		virtual bool RemoveRow (CRowKey Key) = 0;
+		virtual bool UpdateRow (CRowKey Key, CRowIndex Data) = 0;
 
 		virtual bool Create (void) = 0;
 		virtual bool Delete (void) = 0;
@@ -911,7 +911,7 @@ class IStringSimilarity
 
 		virtual IStringSimilarity *Clone (void) = 0;
 
-		virtual double Compare (const CString &sA, const CString &sB) = 0;
+		virtual double Compare (CString sA, CString sB) = 0;
 	};
 
 class IFuzzyGraphStorage
@@ -921,9 +921,9 @@ class IFuzzyGraphStorage
 
 		virtual IFuzzyGraphStorage *Clone (void) = 0;
 
-		virtual bool AddTerm (const CString &sTerm) = 0;
-		virtual bool FindTerm (const CString &sTerm, TArray<CString> *retResults) = 0;
-		virtual bool HasTerm (const CString &sTerm) = 0;
+		virtual bool AddTerm (CString sTerm) = 0;
+		virtual bool FindTerm (CString sTerm, TArray<CString> *retResults) = 0;
+		virtual bool HasTerm (CString sTerm) = 0;
 
 		virtual bool Create (void) = 0;
 		virtual bool Delete (void) = 0;
@@ -960,7 +960,7 @@ class CPreprocessor
 class CTermOccurenceStreamIterator
 	{
 	public:
-		CTermOccurenceStreamIterator (CStringArray &Terms, CIntArray &Positions);
+		CTermOccurenceStreamIterator (CStringArray Terms, CIntArray Positions);
 		CTermOccurenceStreamIterator (const CTermOccurenceStreamIterator &Other);
 		~CTermOccurenceStreamIterator (void);
 
@@ -968,12 +968,12 @@ class CTermOccurenceStreamIterator
 
 		bool HasNext (void);
 		void Next (void);
-		int &PeekPos (void);
-		CString &PeekTerm (void);
+		int PeekPos (void);
+		CString PeekTerm (void);
 
 	private:
-		CStringArray &m_Terms;
-		CIntArray &m_Positions;
+		CStringArray m_Terms;
+		CIntArray m_Positions;
 		int m_iCounter;
 	};
 
@@ -1001,7 +1001,7 @@ class ITokenizer
 
 		virtual ITokenizer *Clone (void) = 0;
 
-		virtual CTermOccurenceStream Operation (CString &sData) = 0;
+		virtual CTermOccurenceStream Operation (CString sData) = 0;
 	};
 
 class IPostprocess
@@ -1042,7 +1042,7 @@ class CIndexEngine
 		bool GetLastIndexed (SEQUENCENUMBER *retRowId);
 		bool SetLastIndexed (SEQUENCENUMBER RowId);
 
-		bool IndexRow (const CRowKey &RowKey, SEQUENCENUMBER RowId, const CDatum &dValue);
+		bool IndexRow (CRowKey RowKey, SEQUENCENUMBER RowId, CDatum dValue);
 		bool Open (void);
 
 	private:
@@ -1051,6 +1051,7 @@ class CIndexEngine
 		CPostprocessor *m_pPostprocessor;
 		IIndexStorage *m_pIndexStorage;
 		IFuzzyGraphStorage *m_pFuzzyStorage;
+		CCriticalSection m_cs;
 	};
 
 class IIndexEngineFactory
@@ -1132,10 +1133,10 @@ class CWhitespaceTokenizer : public ITokenizer
 
 		ITokenizer *Clone (void);
 
-		CTermOccurenceStream Operation (CString &sData);
+		CTermOccurenceStream Operation (CString sData);
 	};
 
-TSortSet<CString> UniqueNgrams (const CString &sString, int iLength);
+TSortSet<CString> UniqueNgrams (CString sString, int iLength);
 
 class CNGramsDiceCoefficient : public IStringSimilarity
 	{
@@ -1148,7 +1149,7 @@ class CNGramsDiceCoefficient : public IStringSimilarity
 
 		IStringSimilarity *Clone (void);
 
-		double Compare (const CString &sA, const CString &sB);
+		double Compare (CString sA, const CString sB);
 
 	private:
 		int m_iLength;
@@ -1165,9 +1166,9 @@ class CAdjacencyListStorage : public IFuzzyGraphStorage
 
 		IFuzzyGraphStorage *Clone (void);
 
-		bool AddTerm (const CString &sTerm);
-		bool FindTerm (const CString &sTerm, TArray<CString> *retResults);
-		bool HasTerm (const CString &sTerm);
+		bool AddTerm (CString sTerm);
+		bool FindTerm (CString sTerm, TArray<CString> *retResults);
+		bool HasTerm (CString sTerm);
 
 		bool Create (void);
 		bool Delete (void);
@@ -1182,7 +1183,7 @@ class CAdjacencyListStorage : public IFuzzyGraphStorage
 class CIndexStructure
 	{
 	public:
-		CIndexStructure (CDatum &Src);
+		CIndexStructure (CDatum Src);
 		~CIndexStructure (void);
 		void Update (SEQUENCENUMBER RowId, CString sTerm);
 		void Update2 (SEQUENCENUMBER RowId, TSortMap<CString, CIntArray> TermPositions);
@@ -1215,13 +1216,13 @@ class CIndexStorageA : public IIndexStorage
 
 		IIndexStorage *Clone (void);
 
-		bool GetTermPos (SEQUENCENUMBER RowId, const CString &sTerm, CIntArray *retPositions);
-		bool FindTerm (const CString &sTerm, TSortSet<SEQUENCENUMBER> *retResults);
-		bool HasRow (const CRowKey &Key);
-		bool HasTerm (const CString &sTerm);
-		bool InsertRow (const CRowKey &Key, CRowIndex &Data);
-		bool RemoveRow (const CRowKey &Key);
-		bool UpdateRow (const CRowKey &Key, const CRowIndex &Data);
+		bool GetTermPos (SEQUENCENUMBER RowId, CString sTerm, CIntArray *retPositions);
+		bool FindTerm (CString sTerm, TSortSet<SEQUENCENUMBER> *retResults);
+		bool HasRow (CRowKey Key);
+		bool HasTerm (CString sTerm);
+		bool InsertRow (CRowKey Key, CRowIndex Data);
+		bool RemoveRow (CRowKey Key);
+		bool UpdateRow (CRowKey Key, CRowIndex Data);
 
 		bool GetLastIndexed (SEQUENCENUMBER *retRowId);
 		bool SetLastIndexed (SEQUENCENUMBER RowID);
@@ -1236,6 +1237,7 @@ class CIndexStorageA : public IIndexStorage
 		CAeonTable *m_pIndexTable;
 		CAeonEngine *m_pEngine;
 		CIndexStructure *m_pIndexStructure;
+		CCriticalSection m_cs;
 	};
 
 class CProseIndexEngineFactory : public IIndexEngineFactory
@@ -1261,7 +1263,7 @@ class CProseIndexEngineFactory : public IIndexEngineFactory
 class CResultsIterator
 	{
 	public:
-		CResultsIterator (TArray<SEQUENCENUMBER> &RowIds, TArray<CIntArray> &Positions);
+		CResultsIterator (TArray<SEQUENCENUMBER> RowIds, TArray<CIntArray> Positions);
 		CResultsIterator (const CResultsIterator &Other);
 		~CResultsIterator (void);
 
@@ -1269,13 +1271,13 @@ class CResultsIterator
 
 		bool HasNext (void);
 		void Next (void);
-		SEQUENCENUMBER &PeekRowId (void);
-		CIntArray &PeekTermPositions (void);
+		SEQUENCENUMBER PeekRowId (void);
+		CIntArray PeekTermPositions (void);
 
 	private:
 		int m_iCounter;
-		TArray<SEQUENCENUMBER> &m_RowIds;
-		TArray<CIntArray> &m_Positions;
+		TArray<SEQUENCENUMBER> m_RowIds;
+		TArray<CIntArray> m_Positions;
 	};
 
 class CQueryResults
@@ -1287,7 +1289,7 @@ class CQueryResults
 
 		CQueryResults &operator= (const CQueryResults &Other);
 
-		void Append (SEQUENCENUMBER RowId, const CIntArray &TermPositions);
+		void Append (SEQUENCENUMBER RowId, CIntArray TermPositions);
 		CResultsIterator Iterator (void);
 
 	private:
@@ -1302,7 +1304,7 @@ class IRetrievalModel
 
 		virtual IRetrievalModel *Clone (void) = 0;
 
-		virtual bool Find (const CString &sQuery, bool bFuzzy, CQueryResults *retResults) = 0;
+		virtual bool Find (CString sQuery, bool bFuzzy, CQueryResults *retResults) = 0;
 	};
 
 class CBooleanRetrieval : public IRetrievalModel
@@ -1316,7 +1318,7 @@ class CBooleanRetrieval : public IRetrievalModel
 
 		IRetrievalModel *Clone (void);
 
-		bool Find (const CString &sQuery, bool bFuzzy, CQueryResults *retResults);
+		bool Find (CString sQuery, bool bFuzzy, CQueryResults *retResults);
 	};
 
 class CSimpleRetrieval : public IRetrievalModel
@@ -1330,7 +1332,7 @@ class CSimpleRetrieval : public IRetrievalModel
 
 		IRetrievalModel *Clone (void);
 
-		bool Find (const CString &sQuery, bool bFuzzy, CQueryResults *retResults);
+		bool Find (CString sQuery, bool bFuzzy, CQueryResults *retResults);
 
 	private:
 		IIndexStorage *m_pIndexStorage;

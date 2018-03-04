@@ -52,7 +52,7 @@ IRetrievalModel *CBooleanRetrieval::Clone (void)
 	return new CBooleanRetrieval();
 	}
 
-bool CBooleanRetrieval::Find (const CString &sQuery, bool bFuzzy, CQueryResults *retResults)
+bool CBooleanRetrieval::Find (CString sQuery, bool bFuzzy, CQueryResults *retResults)
 
 //	Find
 //

@@ -75,7 +75,7 @@ bool GetDataFromTable (CAeonTable *pTable, CDatum *retdData)
 	return true;
 	}
 
-bool SetDataToTable (CAeonTable *pTable, CDatum &dData)
+bool SetDataToTable (CAeonTable *pTable, CDatum dData)
 
 //
 //
@@ -254,7 +254,7 @@ TSortMap<SEQUENCENUMBER, TSortMap<CString, CIntArray>> ToSeqStringIntArrayMapMap
 	return Map;
 	}
 
-CIndexStructure::CIndexStructure (CDatum &Src)
+CIndexStructure::CIndexStructure (CDatum Src)
 	{
 	m_Latest = Src.GetElement(INDEX_KEY_LATEST_ROWID);
 	m_Index = ToStringSeqArrayMap(Src.GetElement(INDEX_KEY_INDEX));
@@ -306,6 +306,8 @@ CIndexStorageA::CIndexStorageA (CAeonTable *pTable, CAeonEngine *pEngine) :
 //
 
 	{
+	CSmartLock Lock(m_cs);
+	printf("constructor\n");
 	}
 
 CIndexStorageA::CIndexStorageA (const CIndexStorageA &Other)
@@ -313,6 +315,8 @@ CIndexStorageA::CIndexStorageA (const CIndexStorageA &Other)
 //
 
 	{
+	CSmartLock Lock(m_cs);
+	printf("copy constructor\n");
 	}
 
 CIndexStorageA::~CIndexStorageA (void)
@@ -320,8 +324,11 @@ CIndexStorageA::~CIndexStorageA (void)
 //
 
 	{
+	CSmartLock Lock(m_cs);
+	printf("destructor\n");
 	Save();
-	delete m_pIndexStructure;
+	if (m_pIndexStructure)
+		delete m_pIndexStructure;
 	}
 
 CIndexStorageA &CIndexStorageA::operator= (const CIndexStorageA &Other)
@@ -329,6 +336,8 @@ CIndexStorageA &CIndexStorageA::operator= (const CIndexStorageA &Other)
 //
 
 	{
+	CSmartLock Lock(m_cs);
+	printf("=\n");
 	return *this;
 	}
 
@@ -339,48 +348,56 @@ IIndexStorage *CIndexStorageA::Clone (void)
 //
 
 	{
+	CSmartLock Lock(m_cs);
+	printf("Clone\n");
 	return new CIndexStorageA (m_pTable, m_pEngine);
 	}
 
-bool CIndexStorageA::GetTermPos (SEQUENCENUMBER RowId, const CString &sTerm, CIntArray *retPositions)
+bool CIndexStorageA::GetTermPos (SEQUENCENUMBER RowId, CString sTerm, CIntArray *retPositions)
 
 //
 //
 //
 
 	{
-	return false;
+	CSmartLock Lock(m_cs);
+	printf("GetTermPos\n");
+	return true;
 	}
 
-bool CIndexStorageA::FindTerm (const CString &sTerm, TSortSet<SEQUENCENUMBER> *retResults)
+bool CIndexStorageA::FindTerm (CString sTerm, TSortSet<SEQUENCENUMBER> *retResults)
 
 //
 //
 //
 
 	{
+	CSmartLock Lock(m_cs);
 	printf("FindTerm\n");
-	return false;
+	return true;
 	}
 
-bool CIndexStorageA::RemoveRow (const CRowKey &Key)
+bool CIndexStorageA::RemoveRow (CRowKey Key)
 
 //
 //
 //
 
 	{
+	CSmartLock Lock(m_cs);
 	printf("RemoveRow\n");
 	return false;
 	}
 
-bool CIndexStorageA::InsertRow (const CRowKey &Key, CRowIndex &Data)
+bool CIndexStorageA::InsertRow (CRowKey Key, CRowIndex Data)
 
 //
 //
 //
 
 	{
+	CSmartLock Lock(m_cs);
+	printf("InsertRow\n");
 	CRowIndexIterator Iterator = Data.Iterator();
 	while (Iterator.HasNext())
 		{
@@ -390,39 +407,41 @@ bool CIndexStorageA::InsertRow (const CRowKey &Key, CRowIndex &Data)
 
 	m_pIndexStructure->Update2(Data.GetRowId(), Data.GetMap());
 
-	printf("Inserted row.\n");
 	return true;
 	}
 
-bool CIndexStorageA::UpdateRow (const CRowKey &Key, const CRowIndex &Data)
+bool CIndexStorageA::UpdateRow (CRowKey Key, CRowIndex Data)
 
 //
 //
 //
 
 	{
+	CSmartLock Lock(m_cs);
 	printf("UpdateRow\n");
 	return false;
 	}
 
-bool CIndexStorageA::HasRow (const CRowKey &Key)
+bool CIndexStorageA::HasRow (CRowKey Key)
 
 //
 //
 //
 
 	{
+	CSmartLock Lock(m_cs);
 	printf("HasRow\n");
 	return false;
 	}
 
-bool CIndexStorageA::HasTerm (const CString &sTerm)
+bool CIndexStorageA::HasTerm (CString sTerm)
 
 //
 //
 //
 
 	{
+	CSmartLock Lock(m_cs);
 	printf("HasTerm\n");
 	return false;
 	}
@@ -434,6 +453,8 @@ bool CIndexStorageA::GetLastIndexed (SEQUENCENUMBER *retRowId)
 //
 
 	{
+	CSmartLock Lock(m_cs);
+	printf("GetLastIndexed\n");
 	*retRowId = m_pIndexStructure->GetLatestRowId();
 	return true;
 	}
@@ -445,6 +466,8 @@ bool CIndexStorageA::SetLastIndexed (SEQUENCENUMBER RowID)
 //
 
 	{
+	CSmartLock Lock(m_cs);
+	printf("SetLastIndexed\n");
 	m_pIndexStructure->SetLatestRowId(RowID);
 	return true;
 	}
@@ -457,6 +480,9 @@ bool CIndexStorageA::Save (void)
 //
 
 	{
+	CSmartLock Lock(m_cs);
+	printf("Save\n");
+
 	CString sError;
 	CRowKey RowKey;
 
@@ -483,6 +509,8 @@ bool CIndexStorageA::Open (void)
 //
 
 	{
+	CSmartLock Lock(m_cs);
+
 	printf("Opening index files.\n");
 	if (!m_pEngine->FindTable(m_pTable->GetName() + "_index", &m_pIndexTable))
 		{
@@ -524,6 +552,8 @@ bool CIndexStorageA::Create (void)
 //
 
 	{
+	CSmartLock Lock(m_cs);
+
 	printf("Creating new index file.\n");
 	CDatum dTableDesc(CDatum::typeStruct);
 	dTableDesc.SetElement("name", m_pTable->GetName() + "_index");
@@ -553,5 +583,7 @@ bool CIndexStorageA::Delete (void)
 //
 
 	{
+	CSmartLock Lock(m_cs);
+	printf("Delete\n");
 	return m_pIndexTable->Delete();
 	}

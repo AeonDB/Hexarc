@@ -67,7 +67,7 @@ ITokenizer *CWhitespaceTokenizer::Clone (void)
 	return new CWhitespaceTokenizer();
 	}
 
-CTermOccurenceStream CWhitespaceTokenizer::Operation (CString &sData)
+CTermOccurenceStream CWhitespaceTokenizer::Operation (CString sData)
 
 //	Operation
 //
@@ -78,15 +78,14 @@ CTermOccurenceStream CWhitespaceTokenizer::Operation (CString &sData)
 
 	char *pPos = sData.GetParsePointer();
 	char *pEndPos = pPos + sData.GetLength();
-	unsigned int iIndex = 0;
-	unsigned int iBegin = 0;
+	int iIndex = 0;
+	int iBegin = 0;
 	bool bWord = false;
 
 	//	Iterate through the each character in the string.
 
 	while (pPos < pEndPos)
 		{
-
 		switch (*pPos)
 			{
 
@@ -103,7 +102,8 @@ CTermOccurenceStream CWhitespaceTokenizer::Operation (CString &sData)
 						//	Save the position of the previous character. It is the end of the term.
 						//	Extract the substring using the beginning and end positions. Save the initial position of the term.
 						//	Append the string and position to CTermOccurenceStream.
-						Occurences.Append(strSubString(sData, iBegin, iIndex - iBegin), iBegin);
+						CString sTerm = strSubString(sData, iBegin, iIndex - iBegin);
+						Occurences.Append(sTerm, iBegin);
 						bWord = false;
 						}
 					break;
@@ -130,7 +130,8 @@ CTermOccurenceStream CWhitespaceTokenizer::Operation (CString &sData)
 
 	if (bWord)
 		{
-		Occurences.Append(strSubString(sData, iBegin, iIndex - iBegin), iBegin);
+		CString sTerm = strSubString(sData, iBegin, iIndex - iBegin);
+		Occurences.Append(sTerm, iBegin);
 		}
 
 	return Occurences;
