@@ -4615,7 +4615,7 @@ void CAeonTable::SetDimensionDesc (CComplexStruct *pDesc, const SDimensionDesc &
 		}
 	}
 
-void CAeonTable::UpdateFTIndex (void)
+void CAeonTable::UpdateFTIndex (CAeonEngine *pEngine)
 
 //	UpdateFTIndex
 //
@@ -4628,7 +4628,7 @@ void CAeonTable::UpdateFTIndex (void)
 
 	//	Use a decorator factory to create a specialized indexing engine.
 
-	CIndexEngine FTIndex = CProseIndexEngineFactory().Create();
+	CIndexEngine FTIndex = CProseIndexEngineFactory(this, pEngine).Create();
 
 	//   If the index already exists, we load it. Otherwise, we
 	//   create an empty index. This method returns false only

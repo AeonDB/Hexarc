@@ -11,6 +11,7 @@
 #endif
 
 class CAeonRowValue;
+class CAeonEngine;
 
 enum EKeyTypes
 	{
@@ -666,7 +667,7 @@ class CAeonTable
 		bool RecoverTableRows (CString *retsError);
 		bool Recreate (IArchonProcessCtx *pProcess, CDatum dDesc, bool *retbUpdated, CString *retsError);
 		bool Save (CString *retsError);
-		void UpdateFTIndex (void);
+		void UpdateFTIndex (CAeonEngine *pEngine);
 		AEONERR UploadFile (CMsgProcessCtx &Ctx, const CString &sSessionID, const CString &sFilePath, CDatum dUploadDesc, CDatum dData, int *retiComplete, CString *retsError);
 
 		static CDatum GetDimensionDesc (SDimensionDesc &Dim);
@@ -757,6 +758,8 @@ class CAeonEngine : public TSimpleEngine<CAeonEngine>
 		CAeonEngine (void);
 		virtual ~CAeonEngine (void);
 
+		bool CreateTable (CDatum dDesc, CAeonTable **retpTable, bool *retbExists, CString *retsError);
+		bool FindTable (const CString &sName, CAeonTable **retpTable);
 		bool GetViewStatus (const CString &sTable, DWORD dwViewID, bool *retbUpToDate, CString *retsError);
 		inline void SetConsoleMode (const CString &sStorage) { m_sConsoleStorage = sStorage; m_bConsoleMode = true; }
 
@@ -775,7 +778,6 @@ class CAeonEngine : public TSimpleEngine<CAeonEngine>
 	private:
 		//	Database commands
 		bool CreateTable (const SArchonMessage &Msg, CDatum dDesc);
-		bool CreateTable (CDatum dDesc, CAeonTable **retpTable, bool *retbExists, CString *retsError);
 		bool FlushTableRows (void);
 		bool GetKeyRange (const SArchonMessage &Msg, const CString &sTableName, int iCount);
 		bool InitConsoleMode (const CString &sStoragePath, CString *retsError);
@@ -809,7 +811,6 @@ class CAeonEngine : public TSimpleEngine<CAeonEngine>
 		void MsgWaitForVolume (const SArchonMessage &Msg, const CHexeSecurityCtx *pSecurityCtx);
 
 		//	Helper routines
-		bool FindTable (const CString &sName, CAeonTable **retpTable);
 		void GetTables (TArray<CAeonTable *> *retTables);
 		bool ParseTableAndView (const SArchonMessage &Msg, 
 								const CHexeSecurityCtx *pSecurityCtx, 
@@ -864,6 +865,7 @@ class CRowIndex
 		CRowIndex &operator= (const CRowIndex &Other);
 
 		void Add (const CString &sTerm, int iTermPosition);
+		TSortMap<CString, CIntArray> GetMap (void);
 		SEQUENCENUMBER GetRowId (void);
 		CRowKey GetRowKey (void);
 		CRowIndexIterator Iterator (void);
@@ -889,7 +891,7 @@ class IIndexStorage
 		virtual bool FindTerm (const CString &sTerm, TSortSet<SEQUENCENUMBER> *retResults) = 0;
 		virtual bool HasRow (const CRowKey &Key) = 0;
 		virtual bool HasTerm (const CString &sTerm) = 0;
-		virtual bool InsertRow (const CRowKey &Key, const CRowIndex &Data) = 0;
+		virtual bool InsertRow (const CRowKey &Key, CRowIndex &Data) = 0;
 		virtual bool RemoveRow (const CRowKey &Key) = 0;
 		virtual bool UpdateRow (const CRowKey &Key, const CRowIndex &Data) = 0;
 
@@ -920,7 +922,7 @@ class IFuzzyGraphStorage
 		virtual IFuzzyGraphStorage *Clone (void) = 0;
 
 		virtual bool AddTerm (const CString &sTerm) = 0;
-		virtual bool FindTerm (const CString &sTerm, CStringArray *retResults) = 0;
+		virtual bool FindTerm (const CString &sTerm, TArray<CString> *retResults) = 0;
 		virtual bool HasTerm (const CString &sTerm) = 0;
 
 		virtual bool Create (void) = 0;
@@ -1155,7 +1157,7 @@ class CNGramsDiceCoefficient : public IStringSimilarity
 class CAdjacencyListStorage : public IFuzzyGraphStorage
 	{
 	public:
-		CAdjacencyListStorage (void);
+		CAdjacencyListStorage (CAeonTable *pTable, CAeonEngine *pEngine);
 		CAdjacencyListStorage (const CAdjacencyListStorage &Other);
 		~CAdjacencyListStorage (void);
 
@@ -1164,19 +1166,48 @@ class CAdjacencyListStorage : public IFuzzyGraphStorage
 		IFuzzyGraphStorage *Clone (void);
 
 		bool AddTerm (const CString &sTerm);
-		bool FindTerm (const CString &sTerm, CStringArray *retResults);
+		bool FindTerm (const CString &sTerm, TArray<CString> *retResults);
 		bool HasTerm (const CString &sTerm);
 
 		bool Create (void);
 		bool Delete (void);
 		bool Open (void);
 		bool Rebuild (void);
+
+	private:
+		CAeonTable *m_pTable;
+		CAeonEngine *m_pEngine;
+	};
+
+class CIndexStructure
+	{
+	public:
+		CIndexStructure (CDatum &Src);
+		~CIndexStructure (void);
+		void Update (SEQUENCENUMBER RowId, CString sTerm);
+		void Update2 (SEQUENCENUMBER RowId, TSortMap<CString, CIntArray> TermPositions);
+		SEQUENCENUMBER GetLatestRowId (void);
+		void SetLatestRowId (SEQUENCENUMBER RowId);
+		CDatum AsDatum (void);
+
+	private:
+		CIndexStructure (const CIndexStructure &Other)
+			{
+			}
+
+		void operator= (const CIndexStructure &Other)
+			{
+			}
+
+		SEQUENCENUMBER m_Latest;
+		TSortMap<CString, TArray<SEQUENCENUMBER>> m_Index;
+		TSortMap<SEQUENCENUMBER, TSortMap<CString, CIntArray>> m_Positions;
 	};
 
 class CIndexStorageA : public IIndexStorage
 	{
 	public:
-		CIndexStorageA (void);
+		CIndexStorageA (CAeonTable *pTable, CAeonEngine *pEngine);
 		CIndexStorageA (const CIndexStorageA &Other);
 		~CIndexStorageA (void);
 
@@ -1188,7 +1219,7 @@ class CIndexStorageA : public IIndexStorage
 		bool FindTerm (const CString &sTerm, TSortSet<SEQUENCENUMBER> *retResults);
 		bool HasRow (const CRowKey &Key);
 		bool HasTerm (const CString &sTerm);
-		bool InsertRow (const CRowKey &Key, const CRowIndex &Data);
+		bool InsertRow (const CRowKey &Key, CRowIndex &Data);
 		bool RemoveRow (const CRowKey &Key);
 		bool UpdateRow (const CRowKey &Key, const CRowIndex &Data);
 
@@ -1198,12 +1229,19 @@ class CIndexStorageA : public IIndexStorage
 		bool Create (void);
 		bool Delete (void);
 		bool Open (void);
+		bool Save (void);
+
+	private:
+		CAeonTable *m_pTable;
+		CAeonTable *m_pIndexTable;
+		CAeonEngine *m_pEngine;
+		CIndexStructure *m_pIndexStructure;
 	};
 
 class CProseIndexEngineFactory : public IIndexEngineFactory
 	{
 	public:
-		CProseIndexEngineFactory (void);
+		CProseIndexEngineFactory (CAeonTable *pTable, CAeonEngine *pEngine);
 		CProseIndexEngineFactory (const CProseIndexEngineFactory &Factory);
 		~CProseIndexEngineFactory (void);
 
@@ -1212,6 +1250,10 @@ class CProseIndexEngineFactory : public IIndexEngineFactory
 		IIndexEngineFactory *Clone (void);
 
 		CIndexEngine Create (void);
+
+	private:
+		CAeonTable *m_pTable;
+		CAeonEngine *m_pEngine;
 	};
 
 // Query Classes

@@ -10,6 +10,9 @@ DECLARE_CONST_STRING(CMD_HELP,							"help")
 DECLARE_CONST_STRING(CMD_GET_ROWS,						"getrows")
 DECLARE_CONST_STRING(CMD_IMPORT_TABLE,					"importtable")
 DECLARE_CONST_STRING(CMD_LIST_TABLES,					"listtables")
+DECLARE_CONST_STRING(CMD_INDEX_TABLE,					"indextable")
+DECLARE_CONST_STRING(CMD_FULLTEXT,						"find")
+DECLARE_CONST_STRING(CMD_FUZZY_FULLTEXT,				"fuzzysearch")
 
 DECLARE_CONST_STRING(FIELD_KEY_TYPE,					"keyType")
 DECLARE_CONST_STRING(FIELD_NAME,						"name")
@@ -18,6 +21,9 @@ DECLARE_CONST_STRING(FIELD_X,							"x")
 DECLARE_CONST_STRING(HELP_CREATE_TABLE,					"createTable {tableDesc}")
 DECLARE_CONST_STRING(HELP_GET_ROWS,						"getRows {tableName} {key} {count}")
 DECLARE_CONST_STRING(HELP_IMPORT_TABLE,					"importTable {tableName} {CSV filespec}")
+DECLARE_CONST_STRING(HELP_INDEX_TABLE,					"indexTable {tableName}")
+DECLARE_CONST_STRING(HELP_FULLTEXT,						"find {tableName} {term1 term2 term3...}")
+DECLARE_CONST_STRING(HELP_FUZZY_FULLTEXT,				"fuzzySearch {tableName} {term1 term2 term3...}")
 
 DECLARE_CONST_STRING(PATH_AEON_FOLDER,					"AeonDB")
 
@@ -25,6 +31,9 @@ DECLARE_CONST_STRING(STR_HELP,							"createTable {tableDesc}\n"
 														"getRows {tableName} {key} {count}\n"
 														"importTable {tableName} {CSV filespec}\n"
 														"listTables\n"
+														"indexTable {tableName}\n"
+														"find {tableName} {term1 term2 term3...}\n"
+														"fuzzySearch {tableName} {term1 term2 term3...}\n"
 														"quit\n"
 														)
 
@@ -210,6 +219,33 @@ CString CAeonEngine::ConsoleCommand (const CString &sCmd, const TArray<CDatum> &
 			}
 
 		return CString::CreateFromHandoff(Output);
+		}
+	else if (strEquals(sCmd, CMD_INDEX_TABLE))
+		{
+		if (Args.GetCount() < 1)
+			return HELP_INDEX_TABLE;
+		
+		CString sTable = Args[0];
+
+		CAeonTable *pTable;
+		if (!FindTable(sTable, &pTable))
+			return strPattern(ERR_UNKNOWN_TABLE, sTable);
+
+		pTable->UpdateFTIndex(this);
+
+		return "Indexing finished.";
+		}
+	else if (strEquals(sCmd, CMD_FULLTEXT))
+		{
+		if (Args.GetCount() < 2)
+			return HELP_FULLTEXT;
+		return "YES";
+		}
+	else if (strEquals(sCmd, CMD_FUZZY_FULLTEXT))
+		{
+		if (Args.GetCount() < 2)
+			return HELP_FUZZY_FULLTEXT;
+		return "YES";
 		}
 	else
 		return NULL_STR;

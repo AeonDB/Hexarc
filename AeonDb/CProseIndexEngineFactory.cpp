@@ -19,14 +19,14 @@
 
 #include "stdafx.h"
 
-CProseIndexEngineFactory::CProseIndexEngineFactory (void)
+CProseIndexEngineFactory::CProseIndexEngineFactory (CAeonTable *pTable, CAeonEngine *pEngine) :
+		m_pTable(pTable),
+		m_pEngine(pEngine)
 
 //	CProseIndexEngineFactory constructor
 
 	{
-
 	//	Intentionally blank
-
 	}
 
 CProseIndexEngineFactory::CProseIndexEngineFactory (const CProseIndexEngineFactory &Factory)
@@ -34,9 +34,7 @@ CProseIndexEngineFactory::CProseIndexEngineFactory (const CProseIndexEngineFacto
 //	CProseIndexEngineFactory copy constructor
 
 	{
-
 	//	Intentionally blank
-
 	}
 
 CProseIndexEngineFactory::~CProseIndexEngineFactory (void)
@@ -44,9 +42,7 @@ CProseIndexEngineFactory::~CProseIndexEngineFactory (void)
 //	CProseIndexEngineFactory destructor
 
 	{
-
 	//	Intentionally blank
-
 	}
 
 CProseIndexEngineFactory &CProseIndexEngineFactory::operator= (const CProseIndexEngineFactory &Factory)
@@ -64,7 +60,7 @@ IIndexEngineFactory* CProseIndexEngineFactory::Clone (void)
 //	Polymorphic method to decouple abstraction from implementation.
 
 	{
-	return new CProseIndexEngineFactory();
+	return new CProseIndexEngineFactory(m_pTable, m_pEngine);
 	}
 
 CIndexEngine CProseIndexEngineFactory::Create (void)
@@ -74,7 +70,6 @@ CIndexEngine CProseIndexEngineFactory::Create (void)
 //	Factory method for CIndexEngine.
 
 	{
-
 	//	Insert the preprocessing classes listed in the class description. Order matters.
 
 	CPreprocessor *pPreprocessor = new CPreprocessor();
@@ -93,8 +88,8 @@ CIndexEngine CProseIndexEngineFactory::Create (void)
 
 	//	Storage classes are interchangeable.
 
-	IIndexStorage *pIndexStorage = new CIndexStorageA();
-	IFuzzyGraphStorage *pFuzzyStorage = new CAdjacencyListStorage();
+	IIndexStorage *pIndexStorage = new CIndexStorageA(m_pTable, m_pEngine);
+	IFuzzyGraphStorage *pFuzzyStorage = new CAdjacencyListStorage(m_pTable, m_pEngine);
 
 	//	Return the complete indexing engine.
 

@@ -178,6 +178,16 @@ void CRowIndex::Add (const CString &sTerm, int iTermPosition)
 		}
 	}
 
+TSortMap<CString, CIntArray> CRowIndex::GetMap (void)
+
+//	GetMap
+//
+//	Get a map of terms to term positions.
+
+	{
+	return m_Map;
+	}
+
 SEQUENCENUMBER CRowIndex::GetRowId (void)
 
 //	GetRowId
