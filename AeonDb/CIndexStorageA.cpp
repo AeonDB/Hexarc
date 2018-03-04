@@ -31,7 +31,7 @@ CDatum GetTableDimensions2 (void)
 //
 
 	{
-	CDatum dDim;
+	CDatum dDim(CDatum::typeStruct);
 	dDim.SetElement("keyType", CDatum("utf8"));
 	dDim.SetElement("keySort", CDatum("ascending"));
 	return dDim;
@@ -468,7 +468,8 @@ bool CIndexStorageA::Save (void)
 
 	if (!m_pIndexTable->Insert(RowKey, m_pIndexStructure->AsDatum(), &sError))
 		{
-		printf(sError + " : Save index failed. Can't write.\n");
+		printf("Cannot write to index file.\n");
+		printf(sError + "\n");
 		return false;
 		}
 
@@ -482,11 +483,15 @@ bool CIndexStorageA::Open (void)
 //
 
 	{
-	if (m_pEngine->FindTable(m_pTable->GetName() + "_index", &m_pIndexTable))
+	printf("Opening index files.\n");
+	if (!m_pEngine->FindTable(m_pTable->GetName() + "_index", &m_pIndexTable))
 		{
-		printf("Open index failed. Can't find index.\n");
-		return false;
+		printf("Cannot find index files.\n");
+		if (!Create())
+			return false;
 		}
+
+
 
 	CString sError;
 	CRowKey RowKey;
@@ -502,12 +507,13 @@ bool CIndexStorageA::Open (void)
 
 	if (!m_pIndexTable->GetData(CAeonTable::DEFAULT_VIEW, RowKey, &dWholeIndex, &Useless, &sError))
 		{
-		printf(sError + ": Open index failed. Can't load index.\n");
+		printf(sError + ": Can't load index file.\n");
 		return false;
 		}
 
 	m_pIndexStructure = new CIndexStructure(dWholeIndex);
 
+	printf("Successfully opened index file.\n");
 	return true;
 	}
 
@@ -518,7 +524,8 @@ bool CIndexStorageA::Create (void)
 //
 
 	{
-	CDatum dTableDesc;
+	printf("Creating new index file.\n");
+	CDatum dTableDesc(CDatum::typeStruct);
 	dTableDesc.SetElement("name", m_pTable->GetName() + "_index");
 	dTableDesc.SetElement("x", GetTableDimensions2());
 
@@ -526,10 +533,15 @@ bool CIndexStorageA::Create (void)
 	CString sError;
 
 	bool bSuccess = m_pEngine->CreateTable(dTableDesc, &m_pIndexTable, &bExists, &sError);
+
+	if (bExists)
+		printf("Index file already exists.\n");
+
 	if (bSuccess)
-		printf("Created index.\n");
+		printf("Created index file.\n");
 	else
-		printf(CString("Failed creating index: ") + sError + "\n");
+		printf("Failed creating index file.\n");
+		printf(sError + "\n");
 	
 	return bSuccess;
 	}

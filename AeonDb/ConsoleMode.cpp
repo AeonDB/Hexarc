@@ -139,33 +139,51 @@ CString CAeonEngine::ConsoleCommand (const CString &sCmd, const TArray<CDatum> &
 		CString sTableName = Args[0];
 		CString sFilespec = Args[1];
 
-		if (sTableName.IsEmpty() || sFilespec.IsEmpty())
+		if (sTableName.IsEmpty())
+			{
+			printf("console command table parameter empty\n");
 			return HELP_IMPORT_TABLE;
+			}
+
+		if (sFilespec.IsEmpty())
+			{
+			printf("console command file spec parameter empty\n");
+			return HELP_IMPORT_TABLE;
+			}
 
 		//	Look for the file to import
 
 		CFileBuffer Input;
 		if (!Input.OpenReadOnly(sFilespec, &sError))
+			{
+			printf("console command bad path\n");
 			return sError;
+			}
 
 		//	Load headers
 
 		CCSVParser Parser(Input);
 		if (!Parser.ParseHeader(&sError))
+			{
+			printf("csv import bad headers\n");
 			return sError;
+			}
 
 		//	Compose a new table descriptor and create the table.
 
 		CDatum dTableDesc(CDatum::typeStruct);
 		dTableDesc.SetElement(FIELD_NAME, sTableName);
-		
+
 		CDatum dKeyX(CDatum::typeStruct);
 		dKeyX.SetElement(FIELD_KEY_TYPE, TYPE_INT32);
 		dTableDesc.SetElement(FIELD_X, dKeyX);
 
 		CAeonTable *pTable;
 		if (!CreateTable(dTableDesc, &pTable, NULL, &sError))
+			{
+			printf("csv import can't create table\n");
 			return sError;
+			}
 
 		//	Now loop over all rows in the input
 
@@ -229,8 +247,12 @@ CString CAeonEngine::ConsoleCommand (const CString &sCmd, const TArray<CDatum> &
 
 		CAeonTable *pTable;
 		if (!FindTable(sTable, &pTable))
+			{
+			printf("cannot find table\n");
 			return strPattern(ERR_UNKNOWN_TABLE, sTable);
+			}
 
+		printf("starting indexing\n");
 		pTable->UpdateFTIndex(this);
 
 		return "Indexing finished.";

@@ -4627,7 +4627,7 @@ void CAeonTable::UpdateFTIndex (CAeonEngine *pEngine)
 	CSmartLock Lock(m_cs);
 
 	//	Use a decorator factory to create a specialized indexing engine.
-
+	printf("Creating indexing engine.\n");
 	CIndexEngine FTIndex = CProseIndexEngineFactory(this, pEngine).Create();
 
 	//   If the index already exists, we load it. Otherwise, we
@@ -4663,15 +4663,17 @@ void CAeonTable::UpdateFTIndex (CAeonEngine *pEngine)
 
 	//	Loop over all rows.
 
+	CRowKey Key;
+	CDatum dValue;
+	SEQUENCENUMBER RowSeq;
 	while (Rows.HasMore())
 		{
-		CRowKey Key;
-		CDatum dValue;
-		SEQUENCENUMBER RowSeq;
 
 		//	Get the row from the table.
 
+		printf("Reading data from row.\n");
 		Rows.GetNextRow(&Key, &dValue, &RowSeq);
+		printf("Successfully read data from row.\n");
 
 		//   If this row’s sequence number is less than or equal to
 		//   the FT Index sequence number, then it means that we’ve
@@ -4679,13 +4681,18 @@ void CAeonTable::UpdateFTIndex (CAeonEngine *pEngine)
 		//   number starts out at 0.
 
 		if (RowSeq <= NewFTSeq)
+			{
+			printf("Skipping previously indexed row.\n");
 			continue;
+			}
 
 		//   Otherwise, we need to index this row.
 		//   dValue is the data for the row. Assume that it is a record
 		//   with one or more fields.
 
+		printf("Indexing new row.\n");
 		FTIndex.IndexRow(Key, dValue, RowSeq);
+		printf("Indexed new row.\n");
 
 		//   We keep track of the highest sequence number we’ve seen.
 
@@ -4697,6 +4704,7 @@ void CAeonTable::UpdateFTIndex (CAeonEngine *pEngine)
 	//   we update the index, we won’t process records that we already
 	//   processed (unless they were updated).
 
+	printf("Keep track of the last row.\n");
 	FTIndex.SetLastIndexed(NewFTSeq);
 	}
 
