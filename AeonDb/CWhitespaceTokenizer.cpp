@@ -76,13 +76,62 @@ CTermOccurenceStream CWhitespaceTokenizer::Operation (CString &sData)
 	{
 	CTermOccurenceStream Occurences;
 
+	char *pPos = sData.GetParsePointer();
+	char *pEndPos = pPos + sData.GetLength();
+	unsigned int iIndex = 0;
+	unsigned int iBegin = 0;
+	bool bWord = false;
+
 	//	Iterate through the each character in the string.
-	//	If the character is not a whitespace character such as tab, form feed, carriage return, etc, it is the beginning of a term.
-		//	Save the character's position
-	//	Continue iterating until the next whitespace character.
-		//	Save the position of the previous character. It is the end of the term.
-	//	Extract the substring using the beginning and end positions. Save the initial position of the term.
-	//	Append the string and position to CTermOccurenceStream.
+
+	while (pPos < pEndPos)
+		{
+
+		switch (*pPos)
+			{
+
+			//	Continue iterating until the next whitespace character.
+
+				case 0x0009u:
+				case 0x000Au:
+				case 0x000Bu:
+				case 0x000Cu:
+				case 0x000Du:
+				case 0x0020u:
+					if (bWord)
+						{
+						//	Save the position of the previous character. It is the end of the term.
+						//	Extract the substring using the beginning and end positions. Save the initial position of the term.
+						//	Append the string and position to CTermOccurenceStream.
+						Occurences.Append(strSubString(sData, iBegin, iIndex - iBegin), iBegin);
+						bWord = false;
+						}
+					break;
+
+				//	If the character is not a whitespace character such as tab, form feed,
+				//	carriage return, etc, it is the beginning of a term.
+
+				default:
+
+					//	Save the character's position
+
+					if (!bWord)
+						{
+						iBegin = iIndex;
+						bWord = true;
+						}
+			}
+
+		pPos++;
+		iIndex++;
+		}
+
+	//	If still tracking a word but the string ended before finding the next whitespace, just added it.
+
+	if (bWord)
+		{
+		Occurences.Append(strSubString(sData, iBegin, iIndex - iBegin), iBegin);
+		}
 
 	return Occurences;
 	}
