@@ -4691,7 +4691,7 @@ void CAeonTable::UpdateFTIndex (CAeonEngine *pEngine)
 		//   with one or more fields.
 
 		printf("Indexing new row.\n");
-		FTIndex.IndexRow(Key, dValue, RowSeq);
+		FTIndex.IndexRow(Key, RowSeq, dValue);
 		printf("Indexed new row.\n");
 
 		//   We keep track of the highest sequence number we’ve seen.
