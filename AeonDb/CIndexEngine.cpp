@@ -97,7 +97,7 @@ bool CIndexEngine::IndexRow (const CRowKey &RowKey, SEQUENCENUMBER RowId, const 
 
 	//	Data needs to be in a string.
 
-	CString sData = dValue.AsString();
+	CString sData = dValue.GetElement(0);
 
 	//	Pass the string to the preprocessor.
 
