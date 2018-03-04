@@ -16,7 +16,7 @@
 CResultsIterator::CResultsIterator (TArray<SEQUENCENUMBER> &RowIds, TArray<CIntArray> &Positions) :
 		m_RowIds(RowIds),
 		m_Positions(Positions),
-		m_iCounter(0)
+		m_iCounter(-1)
 
 //	CResultsIterator constructor
 
@@ -136,12 +136,12 @@ void CQueryResults::Append (SEQUENCENUMBER RowId, const CIntArray &TermPositions
 	// TODO implement this.
 	}
 
-CResultsIterator *CQueryResults::Iterator (void)
+CResultsIterator CQueryResults::Iterator (void)
 
 //	Iterator
 //
 //	Returns an iterator over the elements in this list in proper sequence.
 
 	{
-	return new CResultsIterator(m_RowIds, m_Positions);
+	return CResultsIterator(m_RowIds, m_Positions);
 	}

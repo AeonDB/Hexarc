@@ -1288,7 +1288,7 @@ class CQueryResults
 		CQueryResults &operator= (const CQueryResults &Other);
 
 		void Append (SEQUENCENUMBER RowId, const CIntArray &TermPositions);
-		CResultsIterator *Iterator (void);
+		CResultsIterator Iterator (void);
 
 	private:
 		TArray<SEQUENCENUMBER> m_RowIds;
