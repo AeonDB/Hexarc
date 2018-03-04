@@ -239,7 +239,36 @@ CString CAeonEngine::ConsoleCommand (const CString &sCmd, const TArray<CDatum> &
 		{
 		if (Args.GetCount() < 2)
 			return HELP_FULLTEXT;
-		return "YES";
+
+		CString sTable = Args[0];
+
+		CString SQuery = Args[1];
+
+		CAeonTable *pTable;
+		if (!FindTable(sTable, &pTable))
+			return strPattern(ERR_UNKNOWN_TABLE, sTable);
+
+		CSimpleRetrieval SimpleSearch(new CIndexStorageA(pTable, this), new CAdjacencyListStorage(pTable, this));
+
+		CQueryResults Results;
+
+		SimpleSearch.Find(SQuery, false, &Results);
+
+		CResultsIterator Iterator = Results.Iterator();
+
+		while (Iterator.HasNext())
+			{
+			Iterator.Next();
+			printf(CString("Row ID") + strFromInt(Iterator.PeekRowId(), false) + "\n");
+
+			for (int i = 0; i < Iterator.PeekTermPositions().GetCount(); i++)
+				{
+				printf(strFromInt(Iterator.PeekTermPositions().GetAt(i)) + "\t");
+				}
+			printf("\n");
+			}
+
+		return "Done.";
 		}
 	else if (strEquals(sCmd, CMD_FUZZY_FULLTEXT))
 		{
